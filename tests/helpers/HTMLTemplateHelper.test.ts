@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { HTMLTemplateHelper, type HTMLTemplate, type HeadConfig, type MetaElement, type LinkElement, type ScriptElement } from '@helpers/HTMLTemplateHelper';
+import { describe, it, expect, vi } from 'vitest';
+import { HTMLTemplateHelper, type HTMLTemplate, type HeadConfig } from '@helpers/HTMLTemplateHelper';
 
 describe('HTMLTemplateHelper', () => {
   describe('getDefaultTemplate', () => {

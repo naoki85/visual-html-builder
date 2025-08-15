@@ -1,9 +1,7 @@
 dist/
 node_modules/
-tmp-html-gui-editor/
 *.js
 coverage/
 .vite/
 public/
 index.html
-vite.config.ts.bk
