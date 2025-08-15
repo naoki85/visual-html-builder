@@ -1,11 +1,11 @@
 /**
- * HTML GUI Editor用のユーティリティヘルパー関数集
+ * Utility helper functions for HTML GUI Editor
  */
 export const UtilityHelpers = {
   /**
-   * HTMLエスケープ処理
-   * @param text エスケープする文字列
-   * @returns エスケープされた文字列
+   * Escape HTML special characters
+   * @param text The string to escape
+   * @returns The escaped string
    */
   escapeHtml(text: string): string {
     const div = document.createElement('div');
@@ -14,9 +14,9 @@ export const UtilityHelpers = {
   },
 
   /**
-   * URL形式の妥当性をチェック
-   * @param string チェックする文字列
-   * @returns 有効なURLの場合true
+   * Check if a string is a valid URL format
+   * @param string The string to check
+   * @returns True if the string is a valid URL
    */
   isValidUrl(string: string): boolean {
     try {

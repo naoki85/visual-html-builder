@@ -1,6 +1,6 @@
 /**
- * HTML GUI Editor用のドラッグ&ドロップヘルパー
- * 要素の並び替え機能を管理する
+ * Drag & drop helper for HTML GUI Editor
+ * Manages element reordering functionality
  */
 
 export interface DragDropCallbacks {
@@ -19,7 +19,7 @@ export interface DragDropOptions {
 
 export const DragDropHelper = {
   /**
-   * デフォルトオプション
+   * Get default options
    */
   getDefaultOptions(): Required<DragDropOptions> {
     return {
@@ -31,10 +31,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * ドラッグ対象要素の後に挿入すべき要素を取得
-   * @param container ドロップエリアのコンテナ
-   * @param y マウスのY座標
-   * @param options ドラッグ&ドロップオプション
+   * Get the element after which the dragged element should be inserted
+   * @param container Drop area container
+   * @param y Mouse Y coordinate
+   * @param options Drag & drop options
    */
   getDragAfterElement(
     container: HTMLElement,
@@ -65,10 +65,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * ドロップ処理を実行
-   * @param container コンテナ要素
-   * @param callbacks コールバック関数
-   * @param options ドラッグ&ドロップオプション
+   * Execute drop handling
+   * @param container Container element
+   * @param callbacks Callback functions
+   * @param options Drag & drop options
    */
   handleDrop(
     container: HTMLElement,
@@ -83,7 +83,7 @@ export const DragDropHelper = {
       return parseInt(elementId || '0');
     });
 
-    // コールバックを実行
+    // Execute callbacks
     if (callbacks.onDrop) {
       callbacks.onDrop(newOrder);
     }
@@ -96,10 +96,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * 要素にドラッグ開始イベントリスナーを追加
-   * @param element 対象要素
-   * @param callbacks コールバック関数
-   * @param options ドラッグ&ドロップオプション
+   * Add drag start event listener to element
+   * @param element Target element
+   * @param callbacks Callback functions
+   * @param options Drag & drop options
    */
   addDragStartListener(
     element: HTMLElement,
@@ -125,10 +125,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * 要素にドラッグ終了イベントリスナーを追加
-   * @param element 対象要素
-   * @param callbacks コールバック関数
-   * @param options ドラッグ&ドロップオプション
+   * Add drag end event listener to element
+   * @param element Target element
+   * @param callbacks Callback functions
+   * @param options Drag & drop options
    */
   addDragEndListener(
     element: HTMLElement,
@@ -148,10 +148,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * コンテナにドラッグオーバーイベントリスナーを追加
-   * @param container コンテナ要素
-   * @param callbacks コールバック関数
-   * @param options ドラッグ&ドロップオプション
+   * Add drag over event listener to container
+   * @param container Container element
+   * @param callbacks Callback functions
+   * @param options Drag & drop options
    */
   addDragOverListener(
     container: HTMLElement,
@@ -181,10 +181,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * コンテナにドロップイベントリスナーを追加
-   * @param container コンテナ要素
-   * @param callbacks コールバック関数
-   * @param options ドラッグ&ドロップオプション
+   * Add drop event listener to container
+   * @param container Container element
+   * @param callbacks Callback functions
+   * @param options Drag & drop options
    */
   addDropListener(
     container: HTMLElement,
@@ -198,10 +198,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * 要素群にドラッグ機能を一括設定
-   * @param elements ドラッグ可能な要素の配列
-   * @param callbacks コールバック関数
-   * @param options ドラッグ&ドロップオプション
+   * Set up drag functionality for multiple elements
+   * @param elements Array of draggable elements
+   * @param callbacks Callback functions
+   * @param options Drag & drop options
    */
   setupDraggableElements(
     elements: HTMLElement[],
@@ -216,10 +216,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * ドロップエリアを設定
-   * @param container ドロップエリアのコンテナ
-   * @param callbacks コールバック関数
-   * @param options ドラッグ&ドロップオプション
+   * Set up drop zone
+   * @param container Drop zone container
+   * @param callbacks Callback functions
+   * @param options Drag & drop options
    */
   setupDropZone(
     container: HTMLElement,
@@ -231,10 +231,10 @@ export const DragDropHelper = {
   },
 
   /**
-   * 完全なドラッグ&ドロップ機能を設定
-   * @param container コンテナ要素
-   * @param callbacks コールバック関数
-   * @param options ドラッグ&ドロップオプション
+   * Set up complete drag & drop functionality
+   * @param container Container element
+   * @param callbacks Callback functions
+   * @param options Drag & drop options
    */
   setupDragAndDrop(
     container: HTMLElement,
@@ -243,10 +243,10 @@ export const DragDropHelper = {
   ): void {
     const finalOptions = { ...this.getDefaultOptions(), ...options };
 
-    // ドロップエリアを設定
+    // Set up drop zone
     this.setupDropZone(container, callbacks, options);
 
-    // 既存のドラッグ可能要素を設定
+    // Set up existing draggable elements
     const elements = [
       ...container.querySelectorAll(finalOptions.draggableSelector),
     ] as HTMLElement[];
@@ -254,7 +254,7 @@ export const DragDropHelper = {
   },
 
   /**
-   * ドラッグ&ドロップの視覚的フィードバック用CSSを追加
+   * Add CSS for drag & drop visual feedback
    */
   injectDragDropStyles(): void {
     const styleId = 'html-gui-editor-dragdrop-styles';

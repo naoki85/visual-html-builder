@@ -3,7 +3,7 @@ import { HTMLTemplateHelper, type HTMLTemplate, type HeadConfig, type MetaElemen
 
 describe('HTMLTemplateHelper', () => {
   describe('getDefaultTemplate', () => {
-    it('デフォルトテンプレートを返す', () => {
+    it('should return default template', () => {
       const template = HTMLTemplateHelper.getDefaultTemplate();
       
       expect(template.doctype).toBe('<!DOCTYPE html>');
@@ -18,7 +18,7 @@ describe('HTMLTemplateHelper', () => {
       expect(template.bodyAttributes).toEqual({});
     });
 
-    it('新しいオブジェクトを返す（参照が異なる）', () => {
+    it('should return a new object (different reference)', () => {
       const template1 = HTMLTemplateHelper.getDefaultTemplate();
       const template2 = HTMLTemplateHelper.getDefaultTemplate();
       
@@ -28,34 +28,34 @@ describe('HTMLTemplateHelper', () => {
   });
 
   describe('validateTemplate', () => {
-    it('有効なテンプレートはnullを返す', () => {
+    it('should return null for valid template', () => {
       const template = HTMLTemplateHelper.getDefaultTemplate();
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBeNull();
     });
 
-    it('無効なdoctypeはエラーを返す', () => {
-      const template: HTMLTemplate = { doctype: 'invalid' }; // 'doctype'を含まない
+    it('should return error for invalid doctype', () => {
+      const template: HTMLTemplate = { doctype: 'invalid' }; // Doesn't contain 'doctype'
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBe('Invalid doctype format');
     });
 
-    it('長すぎるタイトルはエラーを返す', () => {
+    it('should return error for too long title', () => {
       const longTitle = 'a'.repeat(201);
       const template: HTMLTemplate = { head: { title: longTitle } };
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBe('Title is too long (max 200 characters)');
     });
 
-    it('無効なmeta要素はエラーを返す', () => {
+    it('should return error for invalid meta element', () => {
       const template: HTMLTemplate = {
-        head: { meta: [{ content: 'value' }] } // charset, name, property, httpEquivが全て未設定
+        head: { meta: [{ content: 'value' }] } // All charset, name, property, httpEquiv are unset
       };
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBe('Meta element must have at least one of: charset, name, property, or http-equiv');
     });
 
-    it('有効なmeta要素は通す', () => {
+    it('should pass valid meta elements', () => {
       const template: HTMLTemplate = {
         head: { 
           meta: [
@@ -70,23 +70,23 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toBeNull();
     });
 
-    it('rel属性のないlink要素はエラーを返す', () => {
+    it('should return error for link element without rel attribute', () => {
       const template: HTMLTemplate = {
-        head: { links: [{ href: 'style.css' }] } // rel属性なし
+        head: { links: [{ href: 'style.css' }] } // No rel attribute
       };
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBe('Link element must have rel attribute');
     });
 
-    it('href属性のないstylesheetリンクはエラーを返す', () => {
+    it('should return error for stylesheet link without href attribute', () => {
       const template: HTMLTemplate = {
-        head: { links: [{ rel: 'stylesheet' }] } // href属性なし
+        head: { links: [{ rel: 'stylesheet' }] } // No href attribute
       };
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBe('Stylesheet link must have href attribute');
     });
 
-    it('有効なlink要素は通す', () => {
+    it('should pass valid link elements', () => {
       const template: HTMLTemplate = {
         head: { 
           links: [
@@ -101,7 +101,7 @@ describe('HTMLTemplateHelper', () => {
   });
 
   describe('buildHeadSection', () => {
-    it('基本的なhead要素を構築する', () => {
+    it('should build basic head elements', () => {
       const headConfig: HeadConfig = {
         title: 'Test Title',
         meta: [{ charset: 'UTF-8' }],
@@ -115,7 +115,7 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toContain('<link rel="stylesheet" href="style.css">');
     });
 
-    it('インラインスクリプトを構築する', () => {
+    it('should build inline script', () => {
       const headConfig: HeadConfig = {
         scripts: [{
           content: 'console.log("test");',
@@ -130,7 +130,7 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toContain('</script>');
     });
 
-    it('外部スクリプトを構築する', () => {
+    it('should build external script', () => {
       const headConfig: HeadConfig = {
         scripts: [{
           src: 'script.js',
@@ -144,7 +144,7 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toContain('<script src="script.js" async defer></script>');
     });
 
-    it('カスタムhead要素を構築する', () => {
+    it('should build custom head elements', () => {
       const headConfig: HeadConfig = {
         customHead: '<link rel="preload" href="font.woff2">\n<style>body { margin: 0; }</style>'
       };
@@ -155,12 +155,12 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toContain('<style>body { margin: 0; }</style>');
     });
 
-    it('空のheadConfigでも正常に動作する', () => {
+    it('should work correctly with empty headConfig', () => {
       const result = HTMLTemplateHelper.buildHeadSection({});
       expect(result).toBe('');
     });
 
-    it('HTMLエスケープを適用する', () => {
+    it('should apply HTML escaping', () => {
       const headConfig: HeadConfig = {
         title: '<script>alert("xss")</script>',
         meta: [{ name: 'description', content: '<img src=x onerror=alert(1)>' }]
@@ -174,7 +174,7 @@ describe('HTMLTemplateHelper', () => {
   });
 
   describe('generateFullHTML', () => {
-    it('基本的なHTMLドキュメントを生成する', () => {
+    it('should generate basic HTML document', () => {
       const bodyContent = '<h1>Hello World</h1>';
       const result = HTMLTemplateHelper.generateFullHTML(bodyContent);
 
@@ -189,7 +189,7 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toContain('</html>');
     });
 
-    it('カスタムテンプレートでHTMLを生成する', () => {
+    it('should generate HTML with custom template', () => {
       const bodyContent = '<p>Test content</p>';
       const template: HTMLTemplate = {
         doctype: '<!DOCTYPE html>',
@@ -209,29 +209,29 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toContain('<body class="custom-body">');
     });
 
-    it('部分的なテンプレートをデフォルトとマージする', () => {
+    it('should merge partial template with defaults', () => {
       const bodyContent = '<div>Content</div>';
       const template: HTMLTemplate = {
         head: { title: 'Partial Title' }
-        // 他のプロパティは未指定
+        // Other properties are unspecified
       };
 
       const result = HTMLTemplateHelper.generateFullHTML(bodyContent, template);
 
-      // カスタムタイトルが使用される
+      // Custom title is used
       expect(result).toContain('<title>Partial Title</title>');
-      // デフォルトのmeta要素が残る
+      // Default meta elements remain
       expect(result).toContain('<meta charset="UTF-8">');
       expect(result).toContain('<meta name="viewport"');
     });
 
-    it('警告を出力してもHTML生成は継続する', () => {
+    it('should continue HTML generation even with warnings', () => {
       const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      // DEVモードをシミュレート
+      // Simulate DEV mode
       (globalThis as any).__DEV__ = true;
       
       const template: HTMLTemplate = {
-        head: { title: 'a'.repeat(201) } // 長すぎるタイトル
+        head: { title: 'a'.repeat(201) } // Too long title
       };
 
       const result = HTMLTemplateHelper.generateFullHTML('<div>Test</div>', template);
@@ -239,14 +239,14 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toContain('<!DOCTYPE html>');
       expect(result).toContain('<div>Test</div>');
       
-      // クリーンアップ
+      // Cleanup
       delete (globalThis as any).__DEV__;
       mockConsoleWarn.mockRestore();
     });
   });
 
   describe('updateTemplate', () => {
-    it('テンプレートを更新する', () => {
+    it('should update template', () => {
       const currentTemplate: HTMLTemplate = {
         doctype: '<!DOCTYPE html>',
         htmlAttributes: { lang: 'en' },
@@ -263,11 +263,11 @@ describe('HTMLTemplateHelper', () => {
 
       expect(result.head?.title).toBe('Updated Title');
       expect(result.bodyAttributes).toEqual({ class: 'updated', id: 'main' });
-      expect(result.htmlAttributes).toEqual({ lang: 'en' }); // 変更されていない
-      expect(result.doctype).toBe('<!DOCTYPE html>'); // 変更されていない
+      expect(result.htmlAttributes).toEqual({ lang: 'en' }); // Unchanged
+      expect(result.doctype).toBe('<!DOCTYPE html>'); // Unchanged
     });
 
-    it('新しいオブジェクトを返す（元のオブジェクトを変更しない）', () => {
+    it('should return new object (does not modify original)', () => {
       const currentTemplate: HTMLTemplate = {
         head: { title: 'Original' }
       };
@@ -279,11 +279,11 @@ describe('HTMLTemplateHelper', () => {
       const result = HTMLTemplateHelper.updateTemplate(currentTemplate, updates);
 
       expect(result).not.toBe(currentTemplate);
-      expect(currentTemplate.head?.title).toBe('Original'); // 元のオブジェクトは変更されない
+      expect(currentTemplate.head?.title).toBe('Original'); // Original object is not modified
       expect(result.head?.title).toBe('Updated');
     });
 
-    it('空の更新でも正常に動作する', () => {
+    it('should work correctly with empty updates', () => {
       const currentTemplate: HTMLTemplate = {
         head: { title: 'Test' }
       };
@@ -291,30 +291,30 @@ describe('HTMLTemplateHelper', () => {
       const result = HTMLTemplateHelper.updateTemplate(currentTemplate, {});
 
       expect(result.head?.title).toBe('Test');
-      expect(result).not.toBe(currentTemplate); // 新しいオブジェクト
+      expect(result).not.toBe(currentTemplate); // New object
     });
   });
 
   describe('buildAttributes', () => {
-    it('基本的な属性文字列を構築する', () => {
+    it('should build basic attribute string', () => {
       const attributes = { lang: 'en', class: 'test', id: 'main' };
       const result = HTMLTemplateHelper.buildAttributes(attributes);
       expect(result).toBe(' lang="en" class="test" id="main"');
     });
 
-    it('boolean属性を正しく処理する', () => {
+    it('should handle boolean attributes correctly', () => {
       const attributes = { disabled: true, hidden: false, async: true };
       const result = HTMLTemplateHelper.buildAttributes(attributes);
       expect(result).toBe(' disabled async');
     });
 
-    it('数値属性を文字列に変換する', () => {
+    it('should convert numeric attributes to strings', () => {
       const attributes = { tabindex: 0, colspan: 2 };
       const result = HTMLTemplateHelper.buildAttributes(attributes);
       expect(result).toBe(' tabindex="0" colspan="2"');
     });
 
-    it('undefined、null、falseの値を除外する', () => {
+    it('should exclude undefined, null, false values', () => {
       const attributes = { 
         lang: 'en', 
         class: undefined, 
@@ -326,37 +326,37 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toBe(' lang="en" data-test="value"');
     });
 
-    it('空のオブジェクトで空文字列を返す', () => {
+    it('should return empty string for empty object', () => {
       const result = HTMLTemplateHelper.buildAttributes({});
       expect(result).toBe('');
     });
 
-    it('HTMLエスケープを適用する', () => {
+    it('should apply HTML escaping', () => {
       const attributes = { title: 'Hello "World" & <Test>' };
       const result = HTMLTemplateHelper.buildAttributes(attributes);
-      expect(result).toBe(' title="Hello "World" &amp; &lt;Test&gt;"'); // ダブルクォートはエスケープされない
+      expect(result).toBe(' title="Hello "World" &amp; &lt;Test&gt;"'); // Double quotes are not escaped
     });
   });
 
   describe('escapeHtml', () => {
-    it('HTMLの特殊文字をエスケープする', () => {
+    it('should escape HTML special characters', () => {
       const input = '<script>alert("XSS") & test</script>';
       const result = HTMLTemplateHelper.escapeHtml(input);
       expect(result).toBe('&lt;script&gt;alert("XSS") &amp; test&lt;/script&gt;');
     });
 
-    it('クォート文字をエスケープする', () => {
+    it('should escape quote characters', () => {
       const input = 'He said "Hello" & \'Goodbye\'';
       const result = HTMLTemplateHelper.escapeHtml(input);
       expect(result).toBe('He said "Hello" &amp; \'Goodbye\'');
     });
 
-    it('空文字列を処理する', () => {
+    it('should handle empty strings', () => {
       const result = HTMLTemplateHelper.escapeHtml('');
       expect(result).toBe('');
     });
 
-    it('通常のテキストはそのまま返す', () => {
+    it('should return normal text unchanged', () => {
       const input = 'Hello World 123';
       const result = HTMLTemplateHelper.escapeHtml(input);
       expect(result).toBe(input);

@@ -13,11 +13,11 @@ export interface ElementType {
 }
 
 /**
- * HTML GUI Editor用の要素タイプ定義ヘルパー
+ * Element type definition helper for HTML GUI Editor
  */
 export const ElementTypesHelper = {
   /**
-   * タイトル要素タイプを作成
+   * Create title element type
    */
   createTitleElement(): ElementType {
     return {
@@ -44,7 +44,7 @@ export const ElementTypesHelper = {
   },
 
   /**
-   * テキスト要素タイプを作成
+   * Create text element type
    */
   createTextElement(): ElementType {
     return {
@@ -65,7 +65,7 @@ export const ElementTypesHelper = {
   },
 
   /**
-   * 画像要素タイプを作成
+   * Create image element type
    */
   createImageElement(): ElementType {
     return {
@@ -117,7 +117,7 @@ export const ElementTypesHelper = {
   },
 
   /**
-   * リスト要素タイプを作成
+   * Create list element type
    */
   createListElement(): ElementType {
     return {
@@ -166,7 +166,7 @@ export const ElementTypesHelper = {
   },
 
   /**
-   * 全ての要素タイプを取得
+   * Get all element types
    */
   getAllElementTypes(): Record<string, ElementType> {
     return {
@@ -178,10 +178,10 @@ export const ElementTypesHelper = {
   },
 
   /**
-   * カスタム要素タイプをデフォルトの要素タイプに追加
-   * @param elementTypes 既存の要素タイプ
-   * @param name 新しい要素タイプ名
-   * @param definition 新しい要素タイプ定義
+   * Add custom element type to default element types
+   * @param elementTypes Existing element types
+   * @param name New element type name
+   * @param definition New element type definition
    */
   registerElementType(
     elementTypes: Record<string, ElementType>,

@@ -1,22 +1,22 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { NotificationHelper, type NotificationOptions, type NotificationType } from '@helpers/NotificationHelper';
+import { NotificationHelper, type NotificationType } from '@helpers/NotificationHelper';
 
 describe('NotificationHelper', () => {
   let container: HTMLElement;
 
   beforeEach(() => {
-    // 各テスト前にコンテナを作成
+    // Create container before each test
     container = document.createElement('div');
     container.id = 'test-container';
     document.body.appendChild(container);
   });
 
   afterEach(() => {
-    // 各テスト後にコンテナと通知をクリーンアップ
+    // Clean up container and notifications after each test
     NotificationHelper.removeAll();
     container.remove();
     
-    // 追加された通知スタイルも削除
+    // Remove added notification styles as well
     const styleElement = document.getElementById('html-gui-editor-notification-styles');
     if (styleElement) {
       styleElement.remove();
@@ -24,7 +24,7 @@ describe('NotificationHelper', () => {
   });
 
   describe('getDefaultOptions', () => {
-    it('デフォルトの通知設定を返す', () => {
+    it('should return default notification options', () => {
       const options = NotificationHelper.getDefaultOptions();
       
       expect(options.type).toBe('success');
@@ -34,7 +34,7 @@ describe('NotificationHelper', () => {
       expect(options.container).toBe(document.body);
     });
 
-    it('新しいオブジェクトを返す（参照が異なる）', () => {
+    it('should return a new object (different reference)', () => {
       const options1 = NotificationHelper.getDefaultOptions();
       const options2 = NotificationHelper.getDefaultOptions();
       
@@ -43,22 +43,22 @@ describe('NotificationHelper', () => {
   });
 
   describe('getNotificationClass', () => {
-    it('success タイプのクラス名を返す', () => {
+    it('should return class name for success type', () => {
       const className = NotificationHelper.getNotificationClass('success');
       expect(className).toBe('editor-notification editor-notification--success');
     });
 
-    it('error タイプのクラス名を返す', () => {
+    it('should return class name for error type', () => {
       const className = NotificationHelper.getNotificationClass('error');
       expect(className).toBe('editor-notification editor-notification--error');
     });
 
-    it('warning タイプのクラス名を返す', () => {
+    it('should return class name for warning type', () => {
       const className = NotificationHelper.getNotificationClass('warning');
       expect(className).toBe('editor-notification editor-notification--warning');
     });
 
-    it('info タイプのクラス名を返す', () => {
+    it('should return class name for info type', () => {
       const className = NotificationHelper.getNotificationClass('info');
       expect(className).toBe('editor-notification editor-notification--info');
     });
@@ -75,7 +75,7 @@ describe('NotificationHelper', () => {
     ] as const;
 
     positions.forEach(position => {
-      it(`${position} の位置クラス名を返す`, () => {
+      it(`should return position class name for ${position}`, () => {
         const className = NotificationHelper.getPositionClass(position);
         expect(className).toBe(`editor-notification--${position}`);
       });
@@ -83,7 +83,7 @@ describe('NotificationHelper', () => {
   });
 
   describe('createNotificationElement', () => {
-    it('基本的な通知要素を作成する', () => {
+    it('should create basic notification element', () => {
       const options = NotificationHelper.getDefaultOptions();
       const element = NotificationHelper.createNotificationElement('Test message', options);
 
@@ -94,14 +94,14 @@ describe('NotificationHelper', () => {
       expect(element.className).toContain('editor-notification--top-right');
     });
 
-    it('異なるタイプで通知要素を作成する', () => {
+    it('should create notification element with different type', () => {
       const options = { ...NotificationHelper.getDefaultOptions(), type: 'error' as NotificationType };
       const element = NotificationHelper.createNotificationElement('Error message', options);
 
       expect(element.className).toContain('editor-notification--error');
     });
 
-    it('カスタムクラス名を追加する', () => {
+    it('should add custom class name', () => {
       const options = { 
         ...NotificationHelper.getDefaultOptions(), 
         className: 'custom-notification'
@@ -111,7 +111,7 @@ describe('NotificationHelper', () => {
       expect(element.className).toContain('custom-notification');
     });
 
-    it('アクセシビリティ属性を設定する', () => {
+    it('should set accessibility attributes', () => {
       const options = NotificationHelper.getDefaultOptions();
       const element = NotificationHelper.createNotificationElement('Test', options);
 
@@ -121,7 +121,7 @@ describe('NotificationHelper', () => {
   });
 
   describe('show', () => {
-    it('基本的な通知を表示する', () => {
+    it('should display basic notification', () => {
       const notification = NotificationHelper.show('Test message', { container });
 
       expect(container.children).toHaveLength(1);
@@ -129,7 +129,7 @@ describe('NotificationHelper', () => {
       expect(notification.textContent).toBe('Test message');
     });
 
-    it('カスタムオプションで通知を表示する', () => {
+    it('should display notification with custom options', () => {
       const notification = NotificationHelper.show('Custom message', {
         container,
         type: 'warning',
@@ -141,24 +141,24 @@ describe('NotificationHelper', () => {
       expect(notification.className).toContain('editor-notification--bottom-left');
     });
 
-    it('duration が 0 の場合は自動削除しない', () => {
+    it('should not auto-remove when duration is 0', () => {
       vi.useFakeTimers();
       
-      const notification = NotificationHelper.show('Persistent message', {
+      NotificationHelper.show('Persistent message', {
         container,
         duration: 0
       });
 
       expect(container.children).toHaveLength(1);
       
-      // 十分な時間が経っても削除されない
+      // Should not be removed even after sufficient time
       vi.advanceTimersByTime(10000);
       expect(container.children).toHaveLength(1);
       
       vi.useRealTimers();
     });
 
-    it('指定したduration後に自動削除される', () => {
+    it('should be auto-removed after specified duration', () => {
       vi.useFakeTimers();
       
       NotificationHelper.show('Auto remove', {
@@ -170,10 +170,10 @@ describe('NotificationHelper', () => {
       
       vi.advanceTimersByTime(1000);
       
-      // remove() でフェードアウト開始
+      // Fade out starts with remove()
       expect(container.children).toHaveLength(1);
       
-      // フェードアウト完了後に削除
+      // Removed after fade out completion
       vi.advanceTimersByTime(300);
       expect(container.children).toHaveLength(0);
       
@@ -182,17 +182,17 @@ describe('NotificationHelper', () => {
   });
 
   describe('showSuccess', () => {
-    it('成功通知を表示する', () => {
+    it('should display success notification', () => {
       const notification = NotificationHelper.showSuccess('Success!', { container });
 
       expect(notification.className).toContain('editor-notification--success');
       expect(notification.textContent).toBe('Success!');
     });
 
-    it('typeオプションは上書きされる', () => {
+    it('should override type option', () => {
       const notification = NotificationHelper.showSuccess('Success!', { 
         container,
-        // @ts-expect-error - type は Omit されているがテストのため
+        // @ts-expect-error - type is omitted but for testing purposes
         type: 'error'
       });
 
@@ -201,14 +201,14 @@ describe('NotificationHelper', () => {
   });
 
   describe('showError', () => {
-    it('エラー通知を表示する', () => {
+    it('should display error notification', () => {
       const notification = NotificationHelper.showError('Error!', { container });
 
       expect(notification.className).toContain('editor-notification--error');
       expect(notification.textContent).toBe('Error!');
     });
 
-    it('デフォルトでduration は 5000ms', () => {
+    it('should have default duration of 5000ms', () => {
       vi.useFakeTimers();
       
       NotificationHelper.showError('Error!', { container });
@@ -218,7 +218,7 @@ describe('NotificationHelper', () => {
       expect(container.children).toHaveLength(1);
       
       vi.advanceTimersByTime(1);
-      vi.advanceTimersByTime(300); // フェードアウト完了
+      vi.advanceTimersByTime(300); // Fade out completion
       expect(container.children).toHaveLength(0);
       
       vi.useRealTimers();
@@ -226,14 +226,14 @@ describe('NotificationHelper', () => {
   });
 
   describe('showWarning', () => {
-    it('警告通知を表示する', () => {
+    it('should display warning notification', () => {
       const notification = NotificationHelper.showWarning('Warning!', { container });
 
       expect(notification.className).toContain('editor-notification--warning');
       expect(notification.textContent).toBe('Warning!');
     });
 
-    it('デフォルトでduration は 4000ms', () => {
+    it('should have default duration of 4000ms', () => {
       vi.useFakeTimers();
       
       NotificationHelper.showWarning('Warning!', { container });
@@ -243,7 +243,7 @@ describe('NotificationHelper', () => {
       expect(container.children).toHaveLength(1);
       
       vi.advanceTimersByTime(1);
-      vi.advanceTimersByTime(300); // フェードアウト完了
+      vi.advanceTimersByTime(300); // Fade out completion
       expect(container.children).toHaveLength(0);
       
       vi.useRealTimers();
@@ -251,7 +251,7 @@ describe('NotificationHelper', () => {
   });
 
   describe('showInfo', () => {
-    it('情報通知を表示する', () => {
+    it('should display info notification', () => {
       const notification = NotificationHelper.showInfo('Info!', { container });
 
       expect(notification.className).toContain('editor-notification--info');
@@ -260,7 +260,7 @@ describe('NotificationHelper', () => {
   });
 
   describe('showSimple', () => {
-    it('シンプルな通知を表示する', () => {
+    it('should display simple notification', () => {
       const notification = NotificationHelper.showSimple('Simple message', container);
 
       expect(notification.className).toBe('editor-notification');
@@ -268,21 +268,21 @@ describe('NotificationHelper', () => {
       expect(container.children).toHaveLength(1);
     });
 
-    it('コンテナ未指定時はdocument.bodyを使用', () => {
+    it('should use document.body when container is not specified', () => {
       const notification = NotificationHelper.showSimple('Body message');
 
       expect(document.body.contains(notification)).toBe(true);
       expect(notification.className).toBe('editor-notification');
     });
 
-    it('3秒後に自動削除される', () => {
+    it('should be auto-removed after 3 seconds', () => {
       vi.useFakeTimers();
       
       NotificationHelper.showSimple('Auto remove', container);
       expect(container.children).toHaveLength(1);
       
       vi.advanceTimersByTime(3000);
-      vi.advanceTimersByTime(300); // フェードアウト完了
+      vi.advanceTimersByTime(300); // Fade out completion
       expect(container.children).toHaveLength(0);
       
       vi.useRealTimers();
@@ -290,7 +290,7 @@ describe('NotificationHelper', () => {
   });
 
   describe('remove', () => {
-    it('通知要素を削除する', () => {
+    it('should remove notification element', () => {
       vi.useFakeTimers();
       
       const notification = NotificationHelper.show('Test', { container, duration: 0 });
@@ -298,21 +298,21 @@ describe('NotificationHelper', () => {
 
       NotificationHelper.remove(notification);
       
-      // フェードアウト効果が適用される
+      // Fade out effect is applied
       expect(notification.style.opacity).toBe('0');
       expect(notification.style.transform).toBe('translateX(100%)');
       
-      // 300ms後に削除
+      // Removed after 300ms
       vi.advanceTimersByTime(300);
       expect(container.children).toHaveLength(0);
       
       vi.useRealTimers();
     });
 
-    it('親要素がない場合は何もしない', () => {
+    it('should do nothing when parent element does not exist', () => {
       const orphanElement = document.createElement('div');
       
-      // エラーを投げないことを確認
+      // Verify that no error is thrown
       expect(() => {
         NotificationHelper.remove(orphanElement);
       }).not.toThrow();
@@ -320,7 +320,7 @@ describe('NotificationHelper', () => {
   });
 
   describe('removeAll', () => {
-    it('全ての通知を削除する', () => {
+    it('should remove all notifications', () => {
       NotificationHelper.show('Message 1', { container, duration: 0 });
       NotificationHelper.show('Message 2', { container, duration: 0 });
       NotificationHelper.showSimple('Message 3', container);
@@ -329,14 +329,14 @@ describe('NotificationHelper', () => {
 
       NotificationHelper.removeAll(container);
 
-      // 全て削除処理が開始される（フェードアウト中）
+      // All removal processes start (fading out)
       expect(container.children).toHaveLength(3);
       Array.from(container.children).forEach(child => {
         expect((child as HTMLElement).style.opacity).toBe('0');
       });
     });
 
-    it('コンテナ未指定時はdocument.body内の通知を削除', () => {
+    it('should remove notifications in document.body when container is not specified', () => {
       NotificationHelper.showSimple('Body message 1');
       NotificationHelper.showSimple('Body message 2');
 
@@ -345,7 +345,7 @@ describe('NotificationHelper', () => {
 
       NotificationHelper.removeAll();
 
-      // 削除処理が開始される
+      // Removal process starts
       const updatedNotifications = document.body.querySelectorAll('.editor-notification');
       Array.from(updatedNotifications).forEach(notification => {
         expect((notification as HTMLElement).style.opacity).toBe('0');
@@ -354,7 +354,7 @@ describe('NotificationHelper', () => {
   });
 
   describe('injectNotificationStyles', () => {
-    it('通知スタイルを追加する', () => {
+    it('should add notification styles', () => {
       NotificationHelper.injectNotificationStyles();
 
       const styleElement = document.getElementById('html-gui-editor-notification-styles');
@@ -363,7 +363,7 @@ describe('NotificationHelper', () => {
       expect(styleElement?.textContent).toContain('.editor-notification');
     });
 
-    it('既にスタイルが存在する場合は重複追加しない', () => {
+    it('should not add duplicate styles when styles already exist', () => {
       NotificationHelper.injectNotificationStyles();
       NotificationHelper.injectNotificationStyles();
 
@@ -371,26 +371,26 @@ describe('NotificationHelper', () => {
       expect(styleElements.length).toBe(1);
     });
 
-    it('追加されるスタイルに必要なクラスが含まれる', () => {
+    it('should include necessary classes in added styles', () => {
       NotificationHelper.injectNotificationStyles();
 
       const styleElement = document.getElementById('html-gui-editor-notification-styles');
       const styles = styleElement?.textContent || '';
 
-      // 基本クラス
+      // Base class
       expect(styles).toContain('.editor-notification');
       
-      // 位置クラス
+      // Position classes
       expect(styles).toContain('.editor-notification--top-right');
       expect(styles).toContain('.editor-notification--bottom-center');
       
-      // タイプクラス
+      // Type classes
       expect(styles).toContain('.editor-notification--success');
       expect(styles).toContain('.editor-notification--error');
       expect(styles).toContain('.editor-notification--warning');
       expect(styles).toContain('.editor-notification--info');
       
-      // アニメーション
+      // Animation
       expect(styles).toContain('@keyframes slideIn');
     });
   });

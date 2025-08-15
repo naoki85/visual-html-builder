@@ -1,6 +1,6 @@
 /**
- * Visual HTML Builder用の通知ヘルパー
- * 様々なタイプの通知を管理する
+ * Notification helper for Visual HTML Builder
+ * Manages various types of notifications
  */
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
@@ -21,7 +21,7 @@ export interface NotificationOptions {
 
 export const NotificationHelper = {
   /**
-   * デフォルトの通知設定
+   * Get default notification options
    */
   getDefaultOptions(): Required<NotificationOptions> {
     return {
@@ -34,7 +34,7 @@ export const NotificationHelper = {
   },
 
   /**
-   * 通知タイプに応じたCSSクラス名を取得
+   * Get CSS class name based on notification type
    */
   getNotificationClass(type: NotificationType): string {
     const baseClass = 'editor-notification';
@@ -42,19 +42,19 @@ export const NotificationHelper = {
   },
 
   /**
-   * 位置に応じたCSSクラス名を取得
+   * Get CSS class name based on position
    */
   getPositionClass(position: NonNullable<NotificationOptions['position']>): string {
     return `editor-notification--${position}`;
   },
 
   /**
-   * 通知要素を作成
+   * Create notification element
    */
   createNotificationElement(message: string, options: Required<NotificationOptions>): HTMLElement {
     const notification = document.createElement('div');
 
-    // CSSクラスを設定
+    // Set CSS classes
     const classes = [
       this.getNotificationClass(options.type),
       this.getPositionClass(options.position),
@@ -67,7 +67,7 @@ export const NotificationHelper = {
     notification.className = classes.join(' ');
     notification.textContent = message;
 
-    // アクセシビリティ属性
+    // Accessibility attributes
     notification.setAttribute('role', 'alert');
     notification.setAttribute('aria-live', 'polite');
 
@@ -75,16 +75,16 @@ export const NotificationHelper = {
   },
 
   /**
-   * 基本的な通知を表示
+   * Show basic notification
    */
   show(message: string, options: NotificationOptions = {}): HTMLElement {
     const finalOptions = { ...this.getDefaultOptions(), ...options };
     const notification = this.createNotificationElement(message, finalOptions);
 
-    // 通知を表示
+    // Display notification
     finalOptions.container.appendChild(notification);
 
-    // 指定時間後に自動削除
+    // Auto-remove after specified duration
     if (finalOptions.duration > 0) {
       setTimeout(() => {
         this.remove(notification);
@@ -95,35 +95,35 @@ export const NotificationHelper = {
   },
 
   /**
-   * 成功通知を表示
+   * Show success notification
    */
   showSuccess(message: string, options: Omit<NotificationOptions, 'type'> = {}): HTMLElement {
     return this.show(message, { ...options, type: 'success' });
   },
 
   /**
-   * エラー通知を表示
+   * Show error notification
    */
   showError(message: string, options: Omit<NotificationOptions, 'type'> = {}): HTMLElement {
     return this.show(message, { ...options, type: 'error', duration: 5000 });
   },
 
   /**
-   * 警告通知を表示
+   * Show warning notification
    */
   showWarning(message: string, options: Omit<NotificationOptions, 'type'> = {}): HTMLElement {
     return this.show(message, { ...options, type: 'warning', duration: 4000 });
   },
 
   /**
-   * 情報通知を表示
+   * Show info notification
    */
   showInfo(message: string, options: Omit<NotificationOptions, 'type'> = {}): HTMLElement {
     return this.show(message, { ...options, type: 'info' });
   },
 
   /**
-   * VisualHtmlBuilder互換のシンプル通知（後方互換性）
+   * Simple notification compatible with VisualHtmlBuilder (backward compatibility)
    */
   showSimple(message: string, container?: HTMLElement): HTMLElement {
     const notification = document.createElement('div');
@@ -141,11 +141,11 @@ export const NotificationHelper = {
   },
 
   /**
-   * 通知を削除
+   * Remove notification
    */
   remove(notification: HTMLElement): void {
     if (notification && notification.parentNode) {
-      // フェードアウトアニメーション
+      // Fade out animation
       notification.style.opacity = '0';
       notification.style.transform = 'translateX(100%)';
 
@@ -156,7 +156,7 @@ export const NotificationHelper = {
   },
 
   /**
-   * 全ての通知を削除
+   * Remove all notifications
    */
   removeAll(container?: HTMLElement): void {
     const targetContainer = container || document.body;
@@ -170,7 +170,7 @@ export const NotificationHelper = {
   },
 
   /**
-   * 通知スタイルを動的に追加（StylesHelperに含まれていない場合の補完）
+   * Dynamically inject notification styles (complement if not included in StylesHelper)
    */
   injectNotificationStyles(): void {
     const styleId = 'html-gui-editor-notification-styles';

@@ -1,24 +1,24 @@
 /**
- * HTML GUI Editor用のスタイルヘルパー
- * エディターのCSSスタイルを管理する
+ * Style helper for HTML GUI Editor
+ * Manages CSS styles for the editor
  */
 export const StylesHelper = {
   /**
-   * エディターのスタイルIDを取得
+   * Get the editor style ID
    */
   getStyleId(): string {
     return 'html-gui-editor-styles';
   },
 
   /**
-   * エディターのスタイルが既に注入されているかチェック
+   * Check if editor styles are already injected
    */
   isStylesInjected(): boolean {
     return !!document.getElementById(this.getStyleId());
   },
 
   /**
-   * エディターのメインCSSスタイルを取得
+   * Get the main CSS styles for the editor
    */
   getEditorStyles(): string {
     return `
@@ -535,7 +535,7 @@ export const StylesHelper = {
   },
 
   /**
-   * エディターのスタイルをDOMに注入
+   * Inject editor styles into the DOM
    */
   injectEditorStyles(): void {
     if (this.isStylesInjected()) {
@@ -550,7 +550,7 @@ export const StylesHelper = {
   },
 
   /**
-   * エディターのスタイルをDOMから削除
+   * Remove editor styles from the DOM
    */
   removeEditorStyles(): void {
     const existingStyle = document.getElementById(this.getStyleId());
@@ -560,12 +560,12 @@ export const StylesHelper = {
   },
 
   /**
-   * カスタムCSSスタイルを追加
-   * @param customStyles 追加するCSSスタイル
-   * @param id スタイル要素のID（デフォルト: 'html-gui-editor-custom-styles'）
+   * Add custom CSS styles
+   * @param customStyles Custom CSS styles to add
+   * @param id Style element ID (default: 'html-gui-editor-custom-styles')
    */
   injectCustomStyles(customStyles: string, id: string = 'html-gui-editor-custom-styles'): void {
-    // 既存のカスタムスタイルを削除
+    // Remove existing custom styles
     const existingCustomStyle = document.getElementById(id);
     if (existingCustomStyle) {
       existingCustomStyle.remove();

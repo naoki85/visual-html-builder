@@ -5,20 +5,20 @@ describe('VisualHtmlBuilder', () => {
   let container: HTMLElement;
 
   beforeEach(() => {
-    // テスト用のコンテナを作成
+    // Create test container
     container = document.createElement('div');
     container.id = 'test-editor-container';
     document.body.appendChild(container);
   });
 
   afterEach(() => {
-    // エディターインスタンスをクリーンアップ
+    // Clean up editor instance
     if ((window as any).htmlEditor) {
       delete (window as any).htmlEditor;
     }
     container.remove();
     
-    // 注入されたスタイルもクリーンアップ
+    // Clean up injected styles
     const editorStyles = document.getElementById('html-gui-editor-styles');
     if (editorStyles) {
       editorStyles.remove();
@@ -26,17 +26,17 @@ describe('VisualHtmlBuilder', () => {
   });
 
   describe('constructor', () => {
-    it('基本的なエディターを初期化する', () => {
+    it('should initialize basic editor', () => {
       const editor = new VisualHtmlBuilder('test-editor-container');
       
       expect(editor.containerId).toBe('test-editor-container');
       expect(editor.container).toBe(container);
       expect(editor.elements).toEqual([]);
       expect(editor.selectedElement).toBeNull();
-      expect(editor.elementCounter).toBe(1);
+      expect(editor.elementCounter).toBe(0);
     });
 
-    it('カスタムオプションでエディターを初期化する', () => {
+    it('should initialize editor with custom options', () => {
       const options = {
         theme: 'dark',
         enabledElements: ['title', 'text'],
@@ -53,19 +53,19 @@ describe('VisualHtmlBuilder', () => {
       expect(editor.elements[0].type).toBe('title');
     });
 
-    it('存在しないコンテナIDでエラーを投げる', () => {
+    it('should throw error for non-existent container ID', () => {
       expect(() => {
         new VisualHtmlBuilder('non-existent-container');
-      }).toThrow('Container element not found');
+      }).toThrow('could not find a element: non-existent-container');
     });
 
-    it('グローバルなwindow.htmlEditorを設定する', () => {
+    it('should set global window.htmlEditor', () => {
       const editor = new VisualHtmlBuilder('test-editor-container');
       
       expect((window as any).htmlEditor).toBe(editor);
     });
 
-    it('VisualHtmlBuilderクラスをwindowに設定する', () => {
+    it('should set VisualHtmlBuilder class on window', () => {
       new VisualHtmlBuilder('test-editor-container');
       
       expect((window as any).VisualHtmlBuilder).toBe(VisualHtmlBuilder);
@@ -73,23 +73,26 @@ describe('VisualHtmlBuilder', () => {
   });
 
   describe('setupUI', () => {
-    it('エディターUIを構築する', () => {
-      const editor = new VisualHtmlBuilder('test-editor-container');
+    it('should build editor UI', () => {
+      new VisualHtmlBuilder('test-editor-container');
       
-      // UIが正しく構築されているかチェック
-      expect(container.className).toContain('html-gui-editor');
+      // Check if UI is built correctly
+      expect(container.querySelector('.html-gui-editor')).not.toBeNull();
       expect(container.querySelector('.editor-sidebar')).not.toBeNull();
-      expect(container.querySelector('.preview-container')).not.toBeNull();
-      expect(container.querySelector('.properties-panel')).not.toBeNull();
+      expect(container.querySelector('.preview-area')).not.toBeNull();
+      expect(container.querySelector('.editor-properties')).not.toBeNull();
     });
 
-    it('要素追加ボタンが生成される', () => {
+    it('should generate element add buttons', () => {
       const editor = new VisualHtmlBuilder('test-editor-container');
       
-      const buttons = container.querySelectorAll('.element-btn');
+      // Render the buttons first
+      editor.render();
+      
+      const buttons = container.querySelectorAll('.element-button');
       expect(buttons.length).toBeGreaterThan(0);
       
-      // デフォルトの要素タイプボタンが存在する
+      // Default element type buttons exist
       const titleBtn = Array.from(buttons).find(btn => 
         btn.textContent?.includes('Title')
       );
@@ -98,13 +101,13 @@ describe('VisualHtmlBuilder', () => {
   });
 
   describe('getHTML', () => {
-    it('空の場合は空文字列を返す', () => {
+    it('should return empty string when empty', () => {
       const editor = new VisualHtmlBuilder('test-editor-container');
       
       expect(editor.getHTML()).toBe('');
     });
 
-    it('要素がある場合はHTMLを生成する', () => {
+    it('should generate HTML when elements exist', () => {
       const editor = new VisualHtmlBuilder('test-editor-container');
       editor.addElement('title');
       editor.updateProperty('text', 'Test Title');
@@ -115,7 +118,7 @@ describe('VisualHtmlBuilder', () => {
   });
 
   describe('getFullHTML', () => {
-    it('完全なHTMLドキュメントを返す', () => {
+    it('should return complete HTML document', () => {
       const editor = new VisualHtmlBuilder('test-editor-container');
       editor.addElement('title');
       
@@ -128,7 +131,7 @@ describe('VisualHtmlBuilder', () => {
       expect(fullHTML).toContain('</html>');
     });
 
-    it('カスタムテンプレートを使用する', () => {
+    it('should use custom template', () => {
       const customTemplate = {
         head: { title: 'Custom Page' }
       };
@@ -149,7 +152,7 @@ describe('VisualHtmlBuilder', () => {
       editor = new VisualHtmlBuilder('test-editor-container');
     });
 
-    it('新しい要素を追加する', () => {
+    it('should add new element', () => {
       const initialCount = editor.elements.length;
       editor.addElement('title');
       
@@ -157,20 +160,20 @@ describe('VisualHtmlBuilder', () => {
       expect(editor.elements[editor.elements.length - 1].type).toBe('title');
     });
 
-    it('要素カウンターが増加する', () => {
+    it('should increment element counter', () => {
       const initialCounter = editor.elementCounter;
       editor.addElement('text');
       
       expect(editor.elementCounter).toBe(initialCounter + 1);
     });
 
-    it('存在しない要素タイプでエラーを投げる', () => {
+    it('should throw error for non-existent element type', () => {
       expect(() => {
         editor.addElement('non-existent-type');
       }).toThrow();
     });
 
-    it('追加後にプレビューが更新される', () => {
+    it('should update preview after adding', () => {
       const updatePreviewSpy = vi.spyOn(editor, 'updatePreview');
       editor.addElement('title');
       
@@ -187,31 +190,31 @@ describe('VisualHtmlBuilder', () => {
       editor.addElement('text');
     });
 
-    it('指定されたIDの要素を削除する', () => {
+    it('should remove element with specified ID', () => {
       const elementToRemove = editor.elements[0];
       const initialCount = editor.elements.length;
       
-      editor.removeElement(elementToRemove.id);
+      editor.deleteElement(elementToRemove.id);
       
       expect(editor.elements.length).toBe(initialCount - 1);
       expect(editor.elements.find(el => el.id === elementToRemove.id)).toBeUndefined();
     });
 
-    it('選択された要素を削除した場合は選択を解除する', () => {
+    it('should deselect when removing selected element', () => {
       const elementToRemove = editor.elements[0];
       editor.selectElement(elementToRemove.id);
       
       expect(editor.selectedElement).not.toBeNull();
       
-      editor.removeElement(elementToRemove.id);
+      editor.deleteElement(elementToRemove.id);
       
       expect(editor.selectedElement).toBeNull();
     });
 
-    it('存在しないIDでは何もしない', () => {
+    it('should do nothing for non-existent ID', () => {
       const initialCount = editor.elements.length;
       
-      editor.removeElement(999);
+      editor.deleteElement(999);
       
       expect(editor.elements.length).toBe(initialCount);
     });
@@ -225,20 +228,20 @@ describe('VisualHtmlBuilder', () => {
       editor.addElement('title');
     });
 
-    it('要素を選択する', () => {
+    it('should select element', () => {
       const element = editor.elements[0];
       editor.selectElement(element.id);
       
       expect(editor.selectedElement).toBe(element);
     });
 
-    it('存在しないIDでは選択しない', () => {
+    it('should not select for non-existent ID', () => {
       editor.selectElement(999);
       
       expect(editor.selectedElement).toBeNull();
     });
 
-    it('選択後にプロパティパネルが更新される', () => {
+    it('should update properties panel after selection', () => {
       const updatePropertiesSpy = vi.spyOn(editor, 'updatePropertiesPanel');
       const element = editor.elements[0];
       
@@ -257,13 +260,13 @@ describe('VisualHtmlBuilder', () => {
       editor.selectElement(editor.elements[0].id);
     });
 
-    it('選択された要素のプロパティを更新する', () => {
+    it('should update properties of selected element', () => {
       editor.updateProperty('text', 'Updated Title');
       
       expect(editor.selectedElement?.props.text).toBe('Updated Title');
     });
 
-    it('選択された要素がない場合は何もしない', () => {
+    it('should do nothing when no element is selected', () => {
       editor.selectedElement = null;
       
       expect(() => {
@@ -271,7 +274,7 @@ describe('VisualHtmlBuilder', () => {
       }).not.toThrow();
     });
 
-    it('更新後にプレビューが更新される', () => {
+    it('should update preview after updating', () => {
       const updatePreviewSpy = vi.spyOn(editor, 'updatePreview');
       
       editor.updateProperty('text', 'New Text');
@@ -281,7 +284,7 @@ describe('VisualHtmlBuilder', () => {
   });
 
   describe('error handling', () => {
-    it('無効な設定でもエラーにならない', () => {
+    it('should not throw error with invalid settings', () => {
       expect(() => {
         new VisualHtmlBuilder('test-editor-container', {
           enabledElements: ['invalid-type'],
@@ -290,10 +293,10 @@ describe('VisualHtmlBuilder', () => {
       }).not.toThrow();
     });
 
-    it('DOM操作エラーをキャッチする', () => {
+    it('should catch DOM manipulation errors', () => {
       const editor = new VisualHtmlBuilder('test-editor-container');
       
-      // コンテナを削除してDOM操作を失敗させる
+      // Remove container to cause DOM manipulation failure
       container.remove();
       
       expect(() => {

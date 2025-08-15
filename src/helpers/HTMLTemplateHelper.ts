@@ -1,6 +1,6 @@
 /**
- * HTML テンプレート管理ヘルパー
- * 完全なHTMLドキュメントの生成とhead要素のカスタマイズを管理
+ * HTML template management helper
+ * Manages generation of complete HTML documents and head element customization
  */
 
 export interface MetaElement {
@@ -46,7 +46,7 @@ export interface HTMLTemplate {
 
 export const HTMLTemplateHelper = {
   /**
-   * デフォルトのHTMLテンプレートを取得
+   * Get default HTML template
    */
   getDefaultTemplate(): HTMLTemplate {
     return {
@@ -69,22 +69,22 @@ export const HTMLTemplateHelper = {
   },
 
   /**
-   * HTMLテンプレートの妥当性を検証
-   * @param template 検証するテンプレート
-   * @returns エラーメッセージ（妥当な場合はnull）
+   * Validate HTML template
+   * @param template Template to validate
+   * @returns Error message (null if valid)
    */
   validateTemplate(template: HTMLTemplate): string | null {
-    // doctypeの妥当性チェック
+    // Validate doctype
     if (template.doctype && !template.doctype.toLowerCase().includes('doctype')) {
       return 'Invalid doctype format';
     }
 
-    // head.titleの妥当性チェック
+    // Validate head.title
     if (template.head?.title && template.head.title.length > 200) {
       return 'Title is too long (max 200 characters)';
     }
 
-    // metaタグの妥当性チェック
+    // Validate meta tags
     if (template.head?.meta) {
       for (const meta of template.head.meta) {
         if (!meta.charset && !meta.name && !meta.property && !meta.httpEquiv) {
@@ -93,7 +93,7 @@ export const HTMLTemplateHelper = {
       }
     }
 
-    // linkタグの妥当性チェック
+    // Validate link tags
     if (template.head?.links) {
       for (const link of template.head.links) {
         if (!link.rel) {
@@ -109,18 +109,18 @@ export const HTMLTemplateHelper = {
   },
 
   /**
-   * head要素のHTMLを構築
-   * @param headConfig head要素の設定
+   * Build head element HTML
+   * @param headConfig Head element configuration
    */
   buildHeadSection(headConfig: HeadConfig): string {
     const parts: string[] = [];
 
-    // title要素
+    // Title element
     if (headConfig.title) {
       parts.push(`  <title>${this.escapeHtml(headConfig.title)}</title>`);
     }
 
-    // meta要素
+    // Meta elements
     if (headConfig.meta && headConfig.meta.length > 0) {
       headConfig.meta.forEach(meta => {
         const attributes = this.buildAttributes(meta as Record<string, string | number | boolean>);
@@ -128,7 +128,7 @@ export const HTMLTemplateHelper = {
       });
     }
 
-    // link要素
+    // Link elements
     if (headConfig.links && headConfig.links.length > 0) {
       headConfig.links.forEach(link => {
         const attributes = this.buildAttributes(link as Record<string, string | number | boolean>);
@@ -136,11 +136,11 @@ export const HTMLTemplateHelper = {
       });
     }
 
-    // script要素
+    // Script elements
     if (headConfig.scripts && headConfig.scripts.length > 0) {
       headConfig.scripts.forEach(script => {
         if (script.content) {
-          // インラインスクリプト
+          // Inline script
           const scriptAttrs: Record<string, string | number | boolean> = {};
           if (script.type) scriptAttrs.type = script.type;
           if (script.async) scriptAttrs.async = script.async;
@@ -151,14 +151,14 @@ export const HTMLTemplateHelper = {
           parts.push(`    ${script.content}`);
           parts.push(`  </script>`);
         } else if (script.src) {
-          // 外部スクリプト
+          // External script
           const attributes = this.buildAttributes(script as Record<string, string | number | boolean>);
           parts.push(`  <script${attributes}></script>`);
         }
       });
     }
 
-    // カスタムhead要素
+    // Custom head elements
     if (headConfig.customHead) {
       const customLines = headConfig.customHead
         .split('\n')
@@ -172,12 +172,12 @@ export const HTMLTemplateHelper = {
   },
 
   /**
-   * 完全なHTMLドキュメントを生成
-   * @param bodyContent body要素の内容
-   * @param template HTMLテンプレート設定
+   * Generate complete HTML document
+   * @param bodyContent Body element content
+   * @param template HTML template settings
    */
   generateFullHTML(bodyContent: string, template: HTMLTemplate = {}): string {
-    // デフォルトテンプレートとマージ
+    // Merge with default template
     const defaultTemplate = this.getDefaultTemplate();
     const mergedTemplate: HTMLTemplate = {
       doctype: template.doctype || defaultTemplate.doctype,
@@ -192,7 +192,7 @@ export const HTMLTemplateHelper = {
       bodyAttributes: { ...defaultTemplate.bodyAttributes, ...template.bodyAttributes }
     };
 
-    // テンプレート妥当性検証
+    // Template validation
     const validationError = this.validateTemplate(mergedTemplate);
     if (validationError) {
       // Development warning - will be removed in production build
@@ -201,14 +201,14 @@ export const HTMLTemplateHelper = {
       }
     }
 
-    // HTML要素の属性を構築
+    // Build HTML element attributes
     const htmlAttributes = this.buildAttributes(mergedTemplate.htmlAttributes || {});
     const bodyAttributes = this.buildAttributes(mergedTemplate.bodyAttributes || {});
 
-    // head要素を構築
+    // Build head element
     const headContent = this.buildHeadSection(mergedTemplate.head || {});
 
-    // 完全なHTMLを構築
+    // Build complete HTML
     const html = [
       mergedTemplate.doctype,
       `<html${htmlAttributes}>`,
@@ -225,9 +225,9 @@ export const HTMLTemplateHelper = {
   },
 
   /**
-   * テンプレートを更新（既存設定とマージ）
-   * @param currentTemplate 現在のテンプレート
-   * @param updates 更新する設定
+   * Update template (merge with existing settings)
+   * @param currentTemplate Current template
+   * @param updates Settings to update
    */
   updateTemplate(currentTemplate: HTMLTemplate, updates: Partial<HTMLTemplate>): HTMLTemplate {
     return {
@@ -252,15 +252,15 @@ export const HTMLTemplateHelper = {
   },
 
   /**
-   * 属性オブジェクトからHTML属性文字列を構築
-   * @param attributes 属性オブジェクト
+   * Build HTML attribute string from attribute object
+   * @param attributes Attribute object
    */
   buildAttributes(attributes: Record<string, string | number | boolean>): string {
     const attrs = Object.entries(attributes)
       .filter(([, value]) => value !== undefined && value !== null && value !== false)
       .map(([key, value]) => {
         if (value === true) {
-          return key; // boolean属性
+          return key; // Boolean attribute
         }
         return `${key}="${this.escapeHtml(String(value))}"`; 
       });
@@ -269,8 +269,8 @@ export const HTMLTemplateHelper = {
   },
 
   /**
-   * HTMLエスケープ処理
-   * @param text エスケープするテキスト
+   * HTML escape processing
+   * @param text Text to escape
    */
   escapeHtml(text: string): string {
     const div = document.createElement('div');

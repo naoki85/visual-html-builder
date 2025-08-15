@@ -1,6 +1,6 @@
 /**
- * HTML GUI Editor用のiframeプレビューヘルパー
- * 親ページのスタイルから分離されたプレビュー機能を管理する
+ * Iframe preview helper for HTML GUI Editor
+ * Manages preview functionality isolated from parent page styles
  */
 
 export interface PreviewCallbacks {
@@ -19,7 +19,7 @@ export interface IframePreviewOptions {
 
 export const IframePreviewHelper = {
   /**
-   * デフォルトオプション
+   * Get default options
    */
   getDefaultOptions(): Required<IframePreviewOptions> {
     return {
@@ -31,9 +31,9 @@ export const IframePreviewHelper = {
   },
 
   /**
-   * iframeプレビューを作成
-   * @param container iframeを配置するコンテナ
-   * @param options オプション設定
+   * Create iframe preview
+   * @param container Container to place the iframe
+   * @param options Option settings
    */
   createIframePreview(
     container: HTMLElement,
@@ -41,7 +41,7 @@ export const IframePreviewHelper = {
   ): HTMLIFrameElement {
     const finalOptions = { ...this.getDefaultOptions(), ...options };
     
-    // 既存のiframeがあれば削除
+    // Remove existing iframe if present
     const existingIframe = container.querySelector('iframe.preview-iframe');
     if (existingIframe) {
       existingIframe.remove();
@@ -54,23 +54,23 @@ export const IframePreviewHelper = {
     iframe.style.border = 'none';
     iframe.style.background = 'white';
     
-    // サンドボックス設定
+    // Sandbox settings
     if (finalOptions.sandboxPermissions.length > 0) {
-      iframe.sandbox.add(...finalOptions.sandboxPermissions);
+      iframe.setAttribute('sandbox', finalOptions.sandboxPermissions.join(' '));
     }
 
     container.appendChild(iframe);
     
-    // 基本HTMLの設定
+    // Basic HTML setup
     this.initializeIframeDocument(iframe, finalOptions);
     
     return iframe;
   },
 
   /**
-   * iframeドキュメントを初期化
-   * @param iframe 対象iframe
-   * @param options オプション設定
+   * Initialize iframe document
+   * @param iframe Target iframe
+   * @param options Option settings
    */
   initializeIframeDocument(
     iframe: HTMLIFrameElement,
@@ -103,7 +103,7 @@ export const IframePreviewHelper = {
   },
 
   /**
-   * iframeの基本スタイルを取得
+   * Get base styles for iframe
    */
   getIframeBaseStyles(): string {
     return `
@@ -234,9 +234,9 @@ export const IframePreviewHelper = {
   },
 
   /**
-   * iframeのコンテンツを更新
-   * @param iframe 対象iframe
-   * @param html 表示するHTML
+   * Update iframe content
+   * @param iframe Target iframe
+   * @param html HTML to display
    */
   updateIframeContent(iframe: HTMLIFrameElement, html: string): void {
     const iframeDoc = iframe.contentDocument;
@@ -249,10 +249,10 @@ export const IframePreviewHelper = {
   },
 
   /**
-   * iframeのイベントリスナーを設定
-   * @param iframe 対象iframe
-   * @param callbacks コールバック関数
-   * @param options オプション設定
+   * Set up iframe event listeners
+   * @param iframe Target iframe
+   * @param callbacks Callback functions
+   * @param options Option settings
    */
   setupIframeEventListeners(
     iframe: HTMLIFrameElement,
@@ -263,7 +263,7 @@ export const IframePreviewHelper = {
     const iframeDoc = iframe.contentDocument;
     if (!iframeDoc) return;
 
-    // 要素クリックイベント
+    // Element click event
     if (finalOptions.enableElementSelection && callbacks.onElementClick) {
       iframeDoc.addEventListener('click', (e) => {
         const elementDiv = (e.target as HTMLElement).closest('.preview-element');
@@ -278,22 +278,22 @@ export const IframePreviewHelper = {
       });
     }
 
-    // ドラッグ&ドロップイベント
+    // Drag & drop events
     if (finalOptions.enableDragDrop) {
       this.setupIframeDragDrop(iframe, callbacks);
     }
   },
 
   /**
-   * iframe内のドラッグ&ドロップを設定
-   * @param iframe 対象iframe
-   * @param callbacks コールバック関数
+   * Set up drag & drop within iframe
+   * @param iframe Target iframe
+   * @param callbacks Callback functions
    */
   setupIframeDragDrop(iframe: HTMLIFrameElement, callbacks: PreviewCallbacks): void {
     const iframeDoc = iframe.contentDocument;
     if (!iframeDoc) return;
 
-    // ドラッグ開始
+    // Drag start
     iframeDoc.addEventListener('dragstart', (e) => {
       const target = e.target as HTMLElement;
       const previewElement = target.closest('.preview-element') as HTMLElement;
@@ -313,7 +313,7 @@ export const IframePreviewHelper = {
       }
     });
 
-    // ドラッグ終了
+    // Drag end
     iframeDoc.addEventListener('dragend', (e) => {
       const target = e.target as HTMLElement;
       const previewElement = target.closest('.preview-element');
@@ -327,7 +327,7 @@ export const IframePreviewHelper = {
       }
     });
 
-    // ドラッグオーバー
+    // Drag over
     iframeDoc.addEventListener('dragover', (e) => {
       e.preventDefault();
       
@@ -350,7 +350,7 @@ export const IframePreviewHelper = {
       }
     });
 
-    // ドロップ
+    // Drop
     iframeDoc.addEventListener('drop', (e) => {
       e.preventDefault();
       
@@ -369,9 +369,9 @@ export const IframePreviewHelper = {
   },
 
   /**
-   * iframe内でのドラッグ後の要素位置を取得
-   * @param container コンテナ要素
-   * @param y Y座標
+   * Get element position after drag within iframe
+   * @param container Container element
+   * @param y Y coordinate
    */
   getDragAfterElementInIframe(container: HTMLElement, y: number): Element | null {
     const draggableElements = [
@@ -391,10 +391,10 @@ export const IframePreviewHelper = {
   },
 
   /**
-   * iframe内にカスタムスタイルを注入
-   * @param iframe 対象iframe
-   * @param styles 追加するCSS
-   * @param styleId スタイル要素のID
+   * Inject custom styles into iframe
+   * @param iframe Target iframe
+   * @param styles CSS to add
+   * @param styleId Style element ID
    */
   injectIframeStyles(
     iframe: HTMLIFrameElement, 
@@ -404,13 +404,13 @@ export const IframePreviewHelper = {
     const iframeDoc = iframe.contentDocument;
     if (!iframeDoc) return;
 
-    // 既存のカスタムスタイルを削除
+    // Remove existing custom styles
     const existingStyle = iframeDoc.getElementById(styleId);
     if (existingStyle) {
       existingStyle.remove();
     }
 
-    // 新しいスタイルを追加
+    // Add new styles
     const style = iframeDoc.createElement('style');
     style.id = styleId;
     style.textContent = styles;
@@ -420,17 +420,17 @@ export const IframePreviewHelper = {
   },
 
   /**
-   * iframeドキュメントを取得
-   * @param iframe 対象iframe
+   * Get iframe document
+   * @param iframe Target iframe
    */
   getIframeDocument(iframe: HTMLIFrameElement): Document | null {
     return iframe.contentDocument || iframe.contentWindow?.document || null;
   },
 
   /**
-   * iframe内の要素を削除
-   * @param iframe 対象iframe
-   * @param elementId 削除する要素ID
+   * Remove element from iframe
+   * @param iframe Target iframe
+   * @param elementId Element ID to remove
    */
   removeElementFromIframe(iframe: HTMLIFrameElement, elementId: number): void {
     const iframeDoc = this.getIframeDocument(iframe);

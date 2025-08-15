@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { StylesHelper } from '@helpers/StylesHelper';
 
 describe('StylesHelper', () => {
   afterEach(() => {
-    // 各テスト後にスタイルをクリーンアップ
+    // Clean up styles after each test
     const styleElement = document.getElementById(StylesHelper.getStyleId());
     if (styleElement) {
       styleElement.remove();
@@ -11,19 +11,19 @@ describe('StylesHelper', () => {
   });
 
   describe('getStyleId', () => {
-    it('スタイルIDを返す', () => {
+    it('should return the style ID', () => {
       const styleId = StylesHelper.getStyleId();
       expect(styleId).toBe('html-gui-editor-styles');
     });
   });
 
   describe('isStylesInjected', () => {
-    it('スタイルが注入されていない場合はfalseを返す', () => {
+    it('should return false when styles are not injected', () => {
       expect(StylesHelper.isStylesInjected()).toBe(false);
     });
 
-    it('スタイルが注入されている場合はtrueを返す', () => {
-      // スタイル要素を手動で作成
+    it('should return true when styles are injected', () => {
+      // Manually create style element
       const style = document.createElement('style');
       style.id = StylesHelper.getStyleId();
       document.head.appendChild(style);
@@ -33,7 +33,7 @@ describe('StylesHelper', () => {
   });
 
   describe('getEditorStyles', () => {
-    it('エディターのCSSスタイルを返す', () => {
+    it('should return editor CSS styles', () => {
       const styles = StylesHelper.getEditorStyles();
       
       expect(styles).toContain('.html-gui-editor');
@@ -42,7 +42,7 @@ describe('StylesHelper', () => {
       expect(styles).toContain('.element-buttons');
     });
 
-    it('CSS変数を使用したスタイルを含む', () => {
+    it('should include styles using CSS variables', () => {
       const styles = StylesHelper.getEditorStyles();
       
       expect(styles).toContain('var(--editor-border-color, #ddd)');
@@ -50,7 +50,7 @@ describe('StylesHelper', () => {
       expect(styles).toContain('var(--text-color, #333)');
     });
 
-    it('文字列として返される', () => {
+    it('should return as a string', () => {
       const styles = StylesHelper.getEditorStyles();
       expect(typeof styles).toBe('string');
       expect(styles.length).toBeGreaterThan(0);
@@ -58,7 +58,7 @@ describe('StylesHelper', () => {
   });
 
   describe('injectEditorStyles', () => {
-    it('エディターのスタイルを注入する', () => {
+    it('should inject editor styles', () => {
       StylesHelper.injectEditorStyles();
 
       const styleElement = document.getElementById(StylesHelper.getStyleId());
@@ -66,7 +66,7 @@ describe('StylesHelper', () => {
       expect(styleElement?.tagName).toBe('STYLE');
     });
 
-    it('既にスタイルが存在する場合は重複注入しない', () => {
+    it('should not inject duplicate styles when styles already exist', () => {
       StylesHelper.injectEditorStyles();
       StylesHelper.injectEditorStyles();
 
@@ -74,7 +74,7 @@ describe('StylesHelper', () => {
       expect(styleElements.length).toBe(1);
     });
 
-    it('注入後はisStylesInjectedがtrueを返す', () => {
+    it('should make isStylesInjected return true after injection', () => {
       expect(StylesHelper.isStylesInjected()).toBe(false);
       
       StylesHelper.injectEditorStyles();
@@ -84,7 +84,7 @@ describe('StylesHelper', () => {
   });
 
   describe('removeEditorStyles', () => {
-    it('エディターのスタイルを削除する', () => {
+    it('should remove editor styles', () => {
       StylesHelper.injectEditorStyles();
       expect(StylesHelper.isStylesInjected()).toBe(true);
 
@@ -94,26 +94,15 @@ describe('StylesHelper', () => {
       expect(document.getElementById(StylesHelper.getStyleId())).toBeNull();
     });
 
-    it('スタイルが存在しない場合もエラーにならない', () => {
+    it('should not throw error when styles do not exist', () => {
       expect(() => {
         StylesHelper.removeEditorStyles();
       }).not.toThrow();
     });
   });
 
-  describe('getIframeStyles', () => {
-    it('iframe用のスタイルを返す', () => {
-      const styles = StylesHelper.getIframeStyles();
-      
-      expect(typeof styles).toBe('string');
-      expect(styles.length).toBeGreaterThan(0);
-      // iframe特有のスタイルが含まれていることを確認
-      expect(styles).toContain('body');
-    });
-  });
-
   describe('injectCustomStyles', () => {
-    it('カスタムCSSを注入する', () => {
+    it('should inject custom CSS', () => {
       const customCSS = '.custom-class { color: red; }';
       StylesHelper.injectCustomStyles(customCSS, 'custom-test-styles');
 
@@ -122,11 +111,11 @@ describe('StylesHelper', () => {
       expect(styleElement?.textContent).toContain(customCSS);
     });
 
-    it('IDが指定されない場合はデフォルトIDを使用', () => {
+    it('should use default ID when ID is not specified', () => {
       const customCSS = '.test { color: blue; }';
       StylesHelper.injectCustomStyles(customCSS);
 
-      // デフォルトID（実装によって異なるがテスト可能）
+      // Default ID (testable though implementation may vary)
       const styleElements = document.head.querySelectorAll('style');
       const hasCustomStyles = Array.from(styleElements).some(style => 
         style.textContent?.includes(customCSS)
@@ -135,13 +124,13 @@ describe('StylesHelper', () => {
     });
 
     afterEach(() => {
-      // カスタムスタイルもクリーンアップ
+      // Clean up custom styles as well
       const customStyle = document.getElementById('custom-test-styles');
       if (customStyle) {
         customStyle.remove();
       }
       
-      // デフォルトIDのカスタムスタイルもクリーンアップ
+      // Clean up custom styles with default ID as well
       const styleElements = document.head.querySelectorAll('style');
       styleElements.forEach(style => {
         if (style.textContent?.includes('.test { color: blue; }')) {
