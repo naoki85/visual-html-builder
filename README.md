@@ -6,6 +6,21 @@ A modern visual HTML builder for browsers. A lightweight TypeScript library that
 
 ## 🚀 Quick Start
 
+### Installation
+
+```bash
+# Install via npm
+npm install @naoki85/visual-html-builder
+
+# Or via yarn
+yarn add @naoki85/visual-html-builder
+
+# Via CDN
+<script type='module'>
+  import VisualHtmlBuilder from "https://unpkg.com/@naoki85/visual-html-builder@latest/dist/index.js";
+</script>
+```
+
 ### Development/Contribution Setup
 
 ```bash
@@ -15,6 +30,38 @@ cd visual-html-builder
 
 # Install dependencies
 npm install
+```
+
+## Basic Usage
+
+```typescript
+import VisualHtmlBuilder from '@naoki85/visual-html-builder';
+
+// Prepare HTML container
+// <div id="editor-container"></div>
+
+// Basic initialization
+const editor = new VisualHtmlBuilder('editor-container', {
+  theme: 'default',
+  enabledElements: ['title', 'text', 'image', 'list']
+});
+editor.render();
+```
+
+### CDN Usage
+
+```html
+<body>
+  <div id="editor-container"></div>
+
+  <script type='module'>
+    import VisualHtmlBuilder from "https://unpkg.com/@naoki85/visual-html-builder@latest/dist/index.js";
+    const editor = new window.VisualHtmlBuilder('editor-container', {
+      enabledElements: ['title', 'text', 'image', 'list']
+    });
+    editor.render();
+  </script>
+</body>
 ```
 
 ### Advanced Configuration
