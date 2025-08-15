@@ -1,0 +1,86 @@
+{
+  "name": "visual-html-builder",
+  "version": "0.0.1",
+  "description": "A modern, TypeScript-based visual HTML builder with drag-and-drop functionality",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "dist/index.umd.js",
+  "module": "dist/index.js",
+  "types": "dist/VisualHtmlBuilder.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/VisualHtmlBuilder.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.js"
+    },
+    "./dist/index.css": {
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
+    }
+  },
+  "unpkg": "dist/index.iife.js",
+  "jsdelivr": "dist/index.iife.js",
+  "keywords": [
+    "html",
+    "builder",
+    "typescript",
+    "drag-and-drop",
+    "visual-editor",
+    "components"
+  ],
+  "author": {
+    "name": "naoki85",
+    "email": "your.email@example.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naoki85/visual-html-builder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/naoki85/visual-html-builder/issues"
+  },
+  "homepage": "https://github.com/naoki85/visual-html-builder#readme",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write src/**/*.{ts,tsx,css,md}",
+    "format:check": "prettier --check src/**/*.{ts,tsx,css,md}",
+    "prepublishOnly": "npm run lint && npm run test:run && npm run build",
+    "size-check": "du -sh dist/* | sort -h"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitest/ui": "^3.2.4",
+    "c8": "^10.1.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.3",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.2.5",
+    "terser": "^5.43.1",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

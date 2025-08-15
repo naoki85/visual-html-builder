@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visual HTML Builder - Demo</title>
+  </head>
+  <body>
+    <div>
+      <h1>Visual HTML Builder Test</h1>
+      <div id="demo-editor"></div>
+    </div>
+
+    <script type="module" src="../src/VisualHtmlBuilder.ts"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize the HTML GUI Editor
+            const editor = new VisualHtmlBuilder('demo-editor', {
+                theme: 'default',
+                enabledElements: ['title', 'text', 'image', 'list', 'custom-button', 'custom-card', 'custom-alert'],
+                initialContent: [],
+                iframePreviewOptions: {
+                    enableDragDrop: true,
+                    enableElementSelection: true,
+                    customStyles: `
+                        /* Custom styles for iframe preview */
+                        body {
+                            background: white;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        }
+                    `
+                }
+            });
+
+            // Function to register custom elements (reusable for toggle functionality)
+            function registerCustomElements(editorInstance) {
+                // Register custom button element
+                editorInstance.registerElementType('custom-button', {
+                name: 'Button',
+                icon: '🔲',
+                defaultProps: { 
+                    text: 'Click Me', 
+                    color: '#007bff', 
+                    size: 'medium',
+                    style: 'solid'
+                },
+                render: (props) => {
+                    const padding = props.size === 'large' ? '12px 24px' : props.size === 'small' ? '6px 12px' : '8px 16px';
+                    const fontSize = props.size === 'large' ? '16px' : props.size === 'small' ? '12px' : '14px';
+                    const borderStyle = props.style === 'outline' ? `border: 2px solid ${props.color}; background: transparent; color: ${props.color};` : `background-color: ${props.color}; color: white; border: none;`;
+                    return `<button style="${borderStyle} padding: ${padding}; font-size: ${fontSize}; border-radius: 4px; cursor: pointer;">${props.text}</button>`;
+                },
+                renderEditor: (props) => `
+                    <div class="property-group">
+                        <label>Button Text:</label>
+                        <input type="text" value="${props.text}" 
+                               onchange="window.htmlEditor.updateProperty('text', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label>Color:</label>
+                        <input type="color" value="${props.color}" 
+                               onchange="window.htmlEditor.updateProperty('color', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label>Size:</label>
+                        <select onchange="window.htmlEditor.updateProperty('size', this.value)">
+                            <option value="small" ${props.size === 'small' ? 'selected' : ''}>Small</option>
+                            <option value="medium" ${props.size === 'medium' ? 'selected' : ''}>Medium</option>
+                            <option value="large" ${props.size === 'large' ? 'selected' : ''}>Large</option>
+                        </select>
+                    </div>
+                    <div class="property-group">
+                        <label>Style:</label>
+                        <select onchange="window.htmlEditor.updateProperty('style', this.value)">
+                            <option value="solid" ${props.style === 'solid' ? 'selected' : ''}>Solid</option>
+                            <option value="outline" ${props.style === 'outline' ? 'selected' : ''}>Outline</option>
+                        </select>
+                    </div>
+                `,
+                validate: (props) => props.text.trim() ? null : 'Button text is required'
+            });
+
+                // Register custom card element
+                editorInstance.registerElementType('custom-card', {
+                name: 'Card',
+                icon: '🃏',
+                defaultProps: {
+                    title: 'Card Title',
+                    content: 'This is the card content area. You can add any text here.',
+                    imageUrl: '',
+                    backgroundColor: '#ffffff',
+                    borderColor: '#dee2e6'
+                },
+                render: (props) => {
+                    const imageSection = props.imageUrl ? `<img src="${props.imageUrl}" alt="${props.title}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">` : '';
+                    return `
+                        <div style="border: 1px solid ${props.borderColor}; border-radius: 8px; background: ${props.backgroundColor}; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            ${imageSection}
+                            <div style="padding: 16px;">
+                                <h3 style="margin: 0 0 12px 0; color: #333;">${props.title}</h3>
+                                <p style="margin: 0; color: #666; line-height: 1.5;">${props.content}</p>
+                            </div>
+                        </div>
+                    `;
+                },
+                renderEditor: (props) => `
+                    <div class="property-group">
+                        <label>Title:</label>
+                        <input type="text" value="${props.title}" 
+                               onchange="window.htmlEditor.updateProperty('title', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label>Content:</label>
+                        <textarea rows="3" onchange="window.htmlEditor.updateProperty('content', this.value)">${props.content}</textarea>
+                    </div>
+                    <div class="property-group">
+                        <label>Image URL (optional):</label>
+                        <input type="url" value="${props.imageUrl}" 
+                               onchange="window.htmlEditor.updateProperty('imageUrl', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label>Background Color:</label>
+                        <input type="color" value="${props.backgroundColor}" 
+                               onchange="window.htmlEditor.updateProperty('backgroundColor', this.value)">
+                    </div>
+                    <div class="property-group">
+                        <label>Border Color:</label>
+                        <input type="color" value="${props.borderColor}" 
+                               onchange="window.htmlEditor.updateProperty('borderColor', this.value)">
+                    </div>
+                `,
+                validate: (props) => {
+                    if (!props.title.trim()) return 'Card title is required';
+                    if (!props.content.trim()) return 'Card content is required';
+                    return null;
+                }
+            });
+
+                // Register custom alert element
+                editorInstance.registerElementType('custom-alert', {
+                name: 'Alert',
+                icon: '⚠️',
+                defaultProps: {
+                    message: 'This is an alert message',
+                    type: 'info',
+                    dismissible: true
+                },
+                render: (props) => {
+                    const colors = {
+                        info: { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' },
+                        success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
+                        warning: { bg: '#fff3cd', border: '#ffeaa7', text: '#856404' },
+                        danger: { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' }
+                    };
+                    const color = colors[props.type];
+                    const dismissButton = props.dismissible ? '<button style="background: none; border: none; float: right; font-size: 18px; cursor: pointer; color: inherit;" onclick="this.parentElement.style.display=\'none\'">&times;</button>' : '';
+                    
+                    return `
+                        <div style="padding: 12px 16px; border: 1px solid ${color.border}; border-radius: 4px; background-color: ${color.bg}; color: ${color.text}; margin: 8px 0;">
+                            ${dismissButton}
+                            ${props.message}
+                        </div>
+                    `;
+                },
+                renderEditor: (props) => `
+                    <div class="property-group">
+                        <label>Message:</label>
+                        <textarea rows="2" onchange="window.htmlEditor.updateProperty('message', this.value)">${props.message}</textarea>
+                    </div>
+                    <div class="property-group">
+                        <label>Type:</label>
+                        <select onchange="window.htmlEditor.updateProperty('type', this.value)">
+                            <option value="info" ${props.type === 'info' ? 'selected' : ''}>Info</option>
+                            <option value="success" ${props.type === 'success' ? 'selected' : ''}>Success</option>
+                            <option value="warning" ${props.type === 'warning' ? 'selected' : ''}>Warning</option>
+                            <option value="danger" ${props.type === 'danger' ? 'selected' : ''}>Danger</option>
+                        </select>
+                    </div>
+                    <div class="property-group">
+                        <label>
+                            <input type="checkbox" ${props.dismissible ? 'checked' : ''} 
+                                   onchange="window.htmlEditor.updateProperty('dismissible', this.checked)">
+                            Dismissible
+                        </label>
+                    </div>
+                `,
+                validate: (props) => props.message.trim() ? null : 'Alert message is required'
+                });
+            }
+
+            // Register custom elements
+            registerCustomElements(editor);
+            
+            // Render the editor UI after registering custom elements
+            editor.render();
+        });
+    </script>
+  </body>
+</html>

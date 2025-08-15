@@ -1,0 +1,71 @@
+{
+  "compilerOptions": {
+    // 基本設定
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "useDefineForClassFields": true,
+    
+    // 出力設定（ライブラリビルド用）
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "outDir": "./dist",
+    "removeComments": true,
+    "sourceMap": true,
+    "noEmit": false,
+    
+    // 型チェック設定（厳格）
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noUncheckedSideEffectImports": true,
+    
+    // モジュール設定
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    
+    // パス解決設定
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@helpers/*": ["src/helpers/*"]
+    },
+    
+    // その他
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  
+  "include": [
+    "src/**/*",
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "vite.config.ts",
+    "vitest.config.ts"
+  ],
+  
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "coverage",
+    "demo"
+  ]
+}

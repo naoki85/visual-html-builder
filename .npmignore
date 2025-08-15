@@ -1,0 +1,60 @@
+# Source files (keep only dist)
+src/
+public/
+demo/
+
+# Development files
+index.html
+vite.config.ts
+vite.config.ts.bk
+tsconfig.json
+.eslintrc.json
+.prettierrc
+
+# Documentation (development)
+CLAUDE.md
+plan.md
+issue.md
+memo.txt
+
+# Node modules and lockfiles
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Test files
+**/*.test.ts
+**/*.test.js
+**/*.spec.ts
+**/*.spec.js
+test/
+tests/
+__tests__/
+coverage/
+
+# Build artifacts (development)
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+.tmp/
+.temp/
+*.tmp
+*.temp
+
+# Git files
+.git/
+.gitignore
+.gitattributes
