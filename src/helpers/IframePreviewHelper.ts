@@ -40,7 +40,7 @@ export const IframePreviewHelper = {
     options: Partial<IframePreviewOptions> = {}
   ): HTMLIFrameElement {
     const finalOptions = { ...this.getDefaultOptions(), ...options };
-    
+
     // Remove existing iframe if present
     const existingIframe = container.querySelector('iframe.preview-iframe');
     if (existingIframe) {
@@ -53,17 +53,17 @@ export const IframePreviewHelper = {
     iframe.style.height = '100%';
     iframe.style.border = 'none';
     iframe.style.background = 'white';
-    
+
     // Sandbox settings
     if (finalOptions.sandboxPermissions.length > 0) {
       iframe.setAttribute('sandbox', finalOptions.sandboxPermissions.join(' '));
     }
 
     container.appendChild(iframe);
-    
+
     // Basic HTML setup
     this.initializeIframeDocument(iframe, finalOptions);
-    
+
     return iframe;
   },
 
@@ -265,7 +265,7 @@ export const IframePreviewHelper = {
 
     // Element click event
     if (finalOptions.enableElementSelection && callbacks.onElementClick) {
-      iframeDoc.addEventListener('click', (e) => {
+      iframeDoc.addEventListener('click', e => {
         const elementDiv = (e.target as HTMLElement).closest('.preview-element');
         if (elementDiv) {
           e.preventDefault();
@@ -294,18 +294,18 @@ export const IframePreviewHelper = {
     if (!iframeDoc) return;
 
     // Drag start
-    iframeDoc.addEventListener('dragstart', (e) => {
+    iframeDoc.addEventListener('dragstart', e => {
       const target = e.target as HTMLElement;
       const previewElement = target.closest('.preview-element') as HTMLElement;
-      
+
       if (previewElement) {
         previewElement.classList.add('dragging');
         const elementId = parseInt(previewElement.getAttribute('data-element-id') || '0');
-        
+
         if (callbacks.onElementDragStart) {
           callbacks.onElementDragStart(elementId);
         }
-        
+
         if (e.dataTransfer) {
           e.dataTransfer.effectAllowed = 'move';
           e.dataTransfer.setData('text/html', previewElement.outerHTML);
@@ -314,13 +314,13 @@ export const IframePreviewHelper = {
     });
 
     // Drag end
-    iframeDoc.addEventListener('dragend', (e) => {
+    iframeDoc.addEventListener('dragend', e => {
       const target = e.target as HTMLElement;
       const previewElement = target.closest('.preview-element');
-      
+
       if (previewElement) {
         previewElement.classList.remove('dragging');
-        
+
         if (callbacks.onElementDragEnd) {
           callbacks.onElementDragEnd();
         }
@@ -328,18 +328,18 @@ export const IframePreviewHelper = {
     });
 
     // Drag over
-    iframeDoc.addEventListener('dragover', (e) => {
+    iframeDoc.addEventListener('dragover', e => {
       e.preventDefault();
-      
+
       if (e.dataTransfer) {
         e.dataTransfer.dropEffect = 'move';
       }
-      
+
       const previewContent = iframeDoc.querySelector('.preview-content') as HTMLElement;
       if (previewContent) {
         const afterElement = this.getDragAfterElementInIframe(previewContent, e.clientY);
         const draggedEl = previewContent.querySelector('.dragging');
-        
+
         if (draggedEl) {
           if (afterElement == null) {
             previewContent.appendChild(draggedEl);
@@ -351,9 +351,9 @@ export const IframePreviewHelper = {
     });
 
     // Drop
-    iframeDoc.addEventListener('drop', (e) => {
+    iframeDoc.addEventListener('drop', e => {
       e.preventDefault();
-      
+
       if (callbacks.onDrop) {
         const previewContent = iframeDoc.querySelector('.preview-content');
         if (previewContent) {
@@ -374,20 +374,21 @@ export const IframePreviewHelper = {
    * @param y Y coordinate
    */
   getDragAfterElementInIframe(container: HTMLElement, y: number): Element | null {
-    const draggableElements = [
-      ...container.querySelectorAll('.preview-element:not(.dragging)')
-    ];
-    
-    return draggableElements.reduce((closest: any, child) => {
-      const box = child.getBoundingClientRect();
-      const offset = y - box.top - box.height / 2;
-      
-      if (offset < 0 && offset > closest.offset) {
-        return { offset: offset, element: child };
-      } else {
-        return closest;
-      }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
+    const draggableElements = [...container.querySelectorAll('.preview-element:not(.dragging)')];
+
+    return draggableElements.reduce(
+      (closest: any, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      },
+      { offset: Number.NEGATIVE_INFINITY }
+    ).element;
   },
 
   /**
@@ -397,8 +398,8 @@ export const IframePreviewHelper = {
    * @param styleId Style element ID
    */
   injectIframeStyles(
-    iframe: HTMLIFrameElement, 
-    styles: string, 
+    iframe: HTMLIFrameElement,
+    styles: string,
     styleId: string = 'custom-styles'
   ): void {
     const iframeDoc = iframe.contentDocument;
@@ -414,7 +415,7 @@ export const IframePreviewHelper = {
     const style = iframeDoc.createElement('style');
     style.id = styleId;
     style.textContent = styles;
-    
+
     const head = iframeDoc.head || iframeDoc.getElementsByTagName('head')[0];
     head.appendChild(style);
   },
@@ -440,5 +441,5 @@ export const IframePreviewHelper = {
     if (element) {
       element.remove();
     }
-  }
+  },
 };

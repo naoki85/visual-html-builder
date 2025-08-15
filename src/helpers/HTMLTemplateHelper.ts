@@ -52,19 +52,19 @@ export const HTMLTemplateHelper = {
     return {
       doctype: '<!DOCTYPE html>',
       htmlAttributes: {
-        lang: 'en'
+        lang: 'en',
       },
       head: {
         title: 'Generated HTML',
         meta: [
           { charset: 'UTF-8' },
-          { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }
+          { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         ],
         links: [],
         scripts: [],
-        customHead: ''
+        customHead: '',
       },
-      bodyAttributes: {}
+      bodyAttributes: {},
     };
   },
 
@@ -145,14 +145,16 @@ export const HTMLTemplateHelper = {
           if (script.type) scriptAttrs.type = script.type;
           if (script.async) scriptAttrs.async = script.async;
           if (script.defer) scriptAttrs.defer = script.defer;
-          
+
           const attributes = this.buildAttributes(scriptAttrs);
           parts.push(`  <script${attributes}>`);
           parts.push(`    ${script.content}`);
           parts.push(`  </script>`);
         } else if (script.src) {
           // External script
-          const attributes = this.buildAttributes(script as Record<string, string | number | boolean>);
+          const attributes = this.buildAttributes(
+            script as Record<string, string | number | boolean>
+          );
           parts.push(`  <script${attributes}></script>`);
         }
       });
@@ -187,9 +189,9 @@ export const HTMLTemplateHelper = {
         meta: template.head?.meta || defaultTemplate.head?.meta,
         links: template.head?.links || defaultTemplate.head?.links,
         scripts: template.head?.scripts || defaultTemplate.head?.scripts,
-        customHead: template.head?.customHead || defaultTemplate.head?.customHead
+        customHead: template.head?.customHead || defaultTemplate.head?.customHead,
       },
-      bodyAttributes: { ...defaultTemplate.bodyAttributes, ...template.bodyAttributes }
+      bodyAttributes: { ...defaultTemplate.bodyAttributes, ...template.bodyAttributes },
     };
 
     // Template validation
@@ -219,7 +221,7 @@ export const HTMLTemplateHelper = {
       `<body${bodyAttributes}>`,
       bodyContent,
       '</body>',
-      '</html>'
+      '</html>',
     ].join('\n');
 
     return html;
@@ -236,19 +238,19 @@ export const HTMLTemplateHelper = {
       ...updates,
       htmlAttributes: {
         ...currentTemplate.htmlAttributes,
-        ...updates.htmlAttributes
+        ...updates.htmlAttributes,
       },
       head: {
         ...currentTemplate.head,
         ...updates.head,
         meta: updates.head?.meta || currentTemplate.head?.meta,
         links: updates.head?.links || currentTemplate.head?.links,
-        scripts: updates.head?.scripts || currentTemplate.head?.scripts
+        scripts: updates.head?.scripts || currentTemplate.head?.scripts,
       },
       bodyAttributes: {
         ...currentTemplate.bodyAttributes,
-        ...updates.bodyAttributes
-      }
+        ...updates.bodyAttributes,
+      },
     };
   },
 
@@ -263,7 +265,7 @@ export const HTMLTemplateHelper = {
         if (value === true) {
           return key; // Boolean attribute
         }
-        return `${key}="${this.escapeHtml(String(value))}"`; 
+        return `${key}="${this.escapeHtml(String(value))}"`;
       });
 
     return attrs.length > 0 ? ` ${attrs.join(' ')}` : '';
@@ -277,5 +279,5 @@ export const HTMLTemplateHelper = {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-  }
+  },
 };

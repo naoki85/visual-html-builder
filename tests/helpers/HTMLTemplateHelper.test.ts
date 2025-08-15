@@ -1,19 +1,23 @@
 import { describe, it, expect, vi } from 'vitest';
-import { HTMLTemplateHelper, type HTMLTemplate, type HeadConfig } from '@helpers/HTMLTemplateHelper';
+import {
+  HTMLTemplateHelper,
+  type HTMLTemplate,
+  type HeadConfig,
+} from '@helpers/HTMLTemplateHelper';
 
 describe('HTMLTemplateHelper', () => {
   describe('getDefaultTemplate', () => {
     it('should return default template', () => {
       const template = HTMLTemplateHelper.getDefaultTemplate();
-      
+
       expect(template.doctype).toBe('<!DOCTYPE html>');
       expect(template.htmlAttributes).toEqual({ lang: 'en' });
       expect(template.head?.title).toBe('Generated HTML');
       expect(template.head?.meta).toHaveLength(2);
       expect(template.head?.meta?.[0]).toEqual({ charset: 'UTF-8' });
-      expect(template.head?.meta?.[1]).toEqual({ 
-        name: 'viewport', 
-        content: 'width=device-width, initial-scale=1.0' 
+      expect(template.head?.meta?.[1]).toEqual({
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1.0',
       });
       expect(template.bodyAttributes).toEqual({});
     });
@@ -21,7 +25,7 @@ describe('HTMLTemplateHelper', () => {
     it('should return a new object (different reference)', () => {
       const template1 = HTMLTemplateHelper.getDefaultTemplate();
       const template2 = HTMLTemplateHelper.getDefaultTemplate();
-      
+
       expect(template1).not.toBe(template2);
       expect(template1.head).not.toBe(template2.head);
     });
@@ -49,22 +53,24 @@ describe('HTMLTemplateHelper', () => {
 
     it('should return error for invalid meta element', () => {
       const template: HTMLTemplate = {
-        head: { meta: [{ content: 'value' }] } // All charset, name, property, httpEquiv are unset
+        head: { meta: [{ content: 'value' }] }, // All charset, name, property, httpEquiv are unset
       };
       const result = HTMLTemplateHelper.validateTemplate(template);
-      expect(result).toBe('Meta element must have at least one of: charset, name, property, or http-equiv');
+      expect(result).toBe(
+        'Meta element must have at least one of: charset, name, property, or http-equiv'
+      );
     });
 
     it('should pass valid meta elements', () => {
       const template: HTMLTemplate = {
-        head: { 
+        head: {
           meta: [
             { charset: 'UTF-8' },
             { name: 'description', content: 'test' },
             { property: 'og:title', content: 'test' },
-            { httpEquiv: 'refresh', content: '30' }
-          ] 
-        }
+            { httpEquiv: 'refresh', content: '30' },
+          ],
+        },
       };
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBeNull();
@@ -72,7 +78,7 @@ describe('HTMLTemplateHelper', () => {
 
     it('should return error for link element without rel attribute', () => {
       const template: HTMLTemplate = {
-        head: { links: [{ href: 'style.css' }] } // No rel attribute
+        head: { links: [{ href: 'style.css' }] }, // No rel attribute
       };
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBe('Link element must have rel attribute');
@@ -80,7 +86,7 @@ describe('HTMLTemplateHelper', () => {
 
     it('should return error for stylesheet link without href attribute', () => {
       const template: HTMLTemplate = {
-        head: { links: [{ rel: 'stylesheet' }] } // No href attribute
+        head: { links: [{ rel: 'stylesheet' }] }, // No href attribute
       };
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBe('Stylesheet link must have href attribute');
@@ -88,12 +94,12 @@ describe('HTMLTemplateHelper', () => {
 
     it('should pass valid link elements', () => {
       const template: HTMLTemplate = {
-        head: { 
+        head: {
           links: [
             { rel: 'stylesheet', href: 'style.css' },
-            { rel: 'icon', href: 'favicon.ico' }
-          ] 
-        }
+            { rel: 'icon', href: 'favicon.ico' },
+          ],
+        },
       };
       const result = HTMLTemplateHelper.validateTemplate(template);
       expect(result).toBeNull();
@@ -105,11 +111,11 @@ describe('HTMLTemplateHelper', () => {
       const headConfig: HeadConfig = {
         title: 'Test Title',
         meta: [{ charset: 'UTF-8' }],
-        links: [{ rel: 'stylesheet', href: 'style.css' }]
+        links: [{ rel: 'stylesheet', href: 'style.css' }],
       };
 
       const result = HTMLTemplateHelper.buildHeadSection(headConfig);
-      
+
       expect(result).toContain('<title>Test Title</title>');
       expect(result).toContain('<meta charset="UTF-8">');
       expect(result).toContain('<link rel="stylesheet" href="style.css">');
@@ -117,14 +123,16 @@ describe('HTMLTemplateHelper', () => {
 
     it('should build inline script', () => {
       const headConfig: HeadConfig = {
-        scripts: [{
-          content: 'console.log("test");',
-          type: 'text/javascript'
-        }]
+        scripts: [
+          {
+            content: 'console.log("test");',
+            type: 'text/javascript',
+          },
+        ],
       };
 
       const result = HTMLTemplateHelper.buildHeadSection(headConfig);
-      
+
       expect(result).toContain('<script type="text/javascript">');
       expect(result).toContain('console.log("test");');
       expect(result).toContain('</script>');
@@ -132,25 +140,27 @@ describe('HTMLTemplateHelper', () => {
 
     it('should build external script', () => {
       const headConfig: HeadConfig = {
-        scripts: [{
-          src: 'script.js',
-          async: true,
-          defer: true
-        }]
+        scripts: [
+          {
+            src: 'script.js',
+            async: true,
+            defer: true,
+          },
+        ],
       };
 
       const result = HTMLTemplateHelper.buildHeadSection(headConfig);
-      
+
       expect(result).toContain('<script src="script.js" async defer></script>');
     });
 
     it('should build custom head elements', () => {
       const headConfig: HeadConfig = {
-        customHead: '<link rel="preload" href="font.woff2">\n<style>body { margin: 0; }</style>'
+        customHead: '<link rel="preload" href="font.woff2">\n<style>body { margin: 0; }</style>',
       };
 
       const result = HTMLTemplateHelper.buildHeadSection(headConfig);
-      
+
       expect(result).toContain('<link rel="preload" href="font.woff2">');
       expect(result).toContain('<style>body { margin: 0; }</style>');
     });
@@ -163,11 +173,11 @@ describe('HTMLTemplateHelper', () => {
     it('should apply HTML escaping', () => {
       const headConfig: HeadConfig = {
         title: '<script>alert("xss")</script>',
-        meta: [{ name: 'description', content: '<img src=x onerror=alert(1)>' }]
+        meta: [{ name: 'description', content: '<img src=x onerror=alert(1)>' }],
       };
 
       const result = HTMLTemplateHelper.buildHeadSection(headConfig);
-      
+
       expect(result).toContain('&lt;script&gt;alert("xss")&lt;/script&gt;');
       expect(result).toContain('&lt;img src=x onerror=alert(1)&gt;');
     });
@@ -196,9 +206,9 @@ describe('HTMLTemplateHelper', () => {
         htmlAttributes: { lang: 'ja', dir: 'ltr' },
         head: {
           title: 'Custom Title',
-          meta: [{ name: 'description', content: 'Custom description' }]
+          meta: [{ name: 'description', content: 'Custom description' }],
         },
-        bodyAttributes: { class: 'custom-body' }
+        bodyAttributes: { class: 'custom-body' },
       };
 
       const result = HTMLTemplateHelper.generateFullHTML(bodyContent, template);
@@ -212,7 +222,7 @@ describe('HTMLTemplateHelper', () => {
     it('should merge partial template with defaults', () => {
       const bodyContent = '<div>Content</div>';
       const template: HTMLTemplate = {
-        head: { title: 'Partial Title' }
+        head: { title: 'Partial Title' },
         // Other properties are unspecified
       };
 
@@ -229,16 +239,16 @@ describe('HTMLTemplateHelper', () => {
       const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       // Simulate DEV mode
       (globalThis as any).__DEV__ = true;
-      
+
       const template: HTMLTemplate = {
-        head: { title: 'a'.repeat(201) } // Too long title
+        head: { title: 'a'.repeat(201) }, // Too long title
       };
 
       const result = HTMLTemplateHelper.generateFullHTML('<div>Test</div>', template);
 
       expect(result).toContain('<!DOCTYPE html>');
       expect(result).toContain('<div>Test</div>');
-      
+
       // Cleanup
       delete (globalThis as any).__DEV__;
       mockConsoleWarn.mockRestore();
@@ -251,12 +261,12 @@ describe('HTMLTemplateHelper', () => {
         doctype: '<!DOCTYPE html>',
         htmlAttributes: { lang: 'en' },
         head: { title: 'Original Title' },
-        bodyAttributes: { class: 'original' }
+        bodyAttributes: { class: 'original' },
       };
 
       const updates: Partial<HTMLTemplate> = {
         head: { title: 'Updated Title' },
-        bodyAttributes: { class: 'updated', id: 'main' }
+        bodyAttributes: { class: 'updated', id: 'main' },
       };
 
       const result = HTMLTemplateHelper.updateTemplate(currentTemplate, updates);
@@ -269,11 +279,11 @@ describe('HTMLTemplateHelper', () => {
 
     it('should return new object (does not modify original)', () => {
       const currentTemplate: HTMLTemplate = {
-        head: { title: 'Original' }
+        head: { title: 'Original' },
       };
 
       const updates: Partial<HTMLTemplate> = {
-        head: { title: 'Updated' }
+        head: { title: 'Updated' },
       };
 
       const result = HTMLTemplateHelper.updateTemplate(currentTemplate, updates);
@@ -285,7 +295,7 @@ describe('HTMLTemplateHelper', () => {
 
     it('should work correctly with empty updates', () => {
       const currentTemplate: HTMLTemplate = {
-        head: { title: 'Test' }
+        head: { title: 'Test' },
       };
 
       const result = HTMLTemplateHelper.updateTemplate(currentTemplate, {});
@@ -315,12 +325,12 @@ describe('HTMLTemplateHelper', () => {
     });
 
     it('should exclude undefined, null, false values', () => {
-      const attributes = { 
-        lang: 'en', 
-        class: undefined, 
-        id: null, 
+      const attributes = {
+        lang: 'en',
+        class: undefined,
+        id: null,
         hidden: false,
-        'data-test': 'value'
+        'data-test': 'value',
       };
       const result = HTMLTemplateHelper.buildAttributes(attributes);
       expect(result).toBe(' lang="en" data-test="value"');

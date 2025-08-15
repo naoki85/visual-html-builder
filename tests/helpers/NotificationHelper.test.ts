@@ -15,7 +15,7 @@ describe('NotificationHelper', () => {
     // Clean up container and notifications after each test
     NotificationHelper.removeAll();
     container.remove();
-    
+
     // Remove added notification styles as well
     const styleElement = document.getElementById('html-gui-editor-notification-styles');
     if (styleElement) {
@@ -26,7 +26,7 @@ describe('NotificationHelper', () => {
   describe('getDefaultOptions', () => {
     it('should return default notification options', () => {
       const options = NotificationHelper.getDefaultOptions();
-      
+
       expect(options.type).toBe('success');
       expect(options.duration).toBe(3000);
       expect(options.position).toBe('top-right');
@@ -37,7 +37,7 @@ describe('NotificationHelper', () => {
     it('should return a new object (different reference)', () => {
       const options1 = NotificationHelper.getDefaultOptions();
       const options2 = NotificationHelper.getDefaultOptions();
-      
+
       expect(options1).not.toBe(options2);
     });
   });
@@ -67,11 +67,11 @@ describe('NotificationHelper', () => {
   describe('getPositionClass', () => {
     const positions = [
       'top-right',
-      'top-left', 
+      'top-left',
       'bottom-right',
       'bottom-left',
       'top-center',
-      'bottom-center'
+      'bottom-center',
     ] as const;
 
     positions.forEach(position => {
@@ -95,16 +95,19 @@ describe('NotificationHelper', () => {
     });
 
     it('should create notification element with different type', () => {
-      const options = { ...NotificationHelper.getDefaultOptions(), type: 'error' as NotificationType };
+      const options = {
+        ...NotificationHelper.getDefaultOptions(),
+        type: 'error' as NotificationType,
+      };
       const element = NotificationHelper.createNotificationElement('Error message', options);
 
       expect(element.className).toContain('editor-notification--error');
     });
 
     it('should add custom class name', () => {
-      const options = { 
-        ...NotificationHelper.getDefaultOptions(), 
-        className: 'custom-notification'
+      const options = {
+        ...NotificationHelper.getDefaultOptions(),
+        className: 'custom-notification',
       };
       const element = NotificationHelper.createNotificationElement('Test', options);
 
@@ -134,7 +137,7 @@ describe('NotificationHelper', () => {
         container,
         type: 'warning',
         position: 'bottom-left',
-        duration: 1000
+        duration: 1000,
       });
 
       expect(notification.className).toContain('editor-notification--warning');
@@ -143,40 +146,40 @@ describe('NotificationHelper', () => {
 
     it('should not auto-remove when duration is 0', () => {
       vi.useFakeTimers();
-      
+
       NotificationHelper.show('Persistent message', {
         container,
-        duration: 0
+        duration: 0,
       });
 
       expect(container.children).toHaveLength(1);
-      
+
       // Should not be removed even after sufficient time
       vi.advanceTimersByTime(10000);
       expect(container.children).toHaveLength(1);
-      
+
       vi.useRealTimers();
     });
 
     it('should be auto-removed after specified duration', () => {
       vi.useFakeTimers();
-      
+
       NotificationHelper.show('Auto remove', {
         container,
-        duration: 1000
+        duration: 1000,
       });
 
       expect(container.children).toHaveLength(1);
-      
+
       vi.advanceTimersByTime(1000);
-      
+
       // Fade out starts with remove()
       expect(container.children).toHaveLength(1);
-      
+
       // Removed after fade out completion
       vi.advanceTimersByTime(300);
       expect(container.children).toHaveLength(0);
-      
+
       vi.useRealTimers();
     });
   });
@@ -190,10 +193,10 @@ describe('NotificationHelper', () => {
     });
 
     it('should override type option', () => {
-      const notification = NotificationHelper.showSuccess('Success!', { 
+      const notification = NotificationHelper.showSuccess('Success!', {
         container,
         // @ts-expect-error - type is omitted but for testing purposes
-        type: 'error'
+        type: 'error',
       });
 
       expect(notification.className).toContain('editor-notification--success');
@@ -210,17 +213,17 @@ describe('NotificationHelper', () => {
 
     it('should have default duration of 5000ms', () => {
       vi.useFakeTimers();
-      
+
       NotificationHelper.showError('Error!', { container });
       expect(container.children).toHaveLength(1);
-      
+
       vi.advanceTimersByTime(4999);
       expect(container.children).toHaveLength(1);
-      
+
       vi.advanceTimersByTime(1);
       vi.advanceTimersByTime(300); // Fade out completion
       expect(container.children).toHaveLength(0);
-      
+
       vi.useRealTimers();
     });
   });
@@ -235,17 +238,17 @@ describe('NotificationHelper', () => {
 
     it('should have default duration of 4000ms', () => {
       vi.useFakeTimers();
-      
+
       NotificationHelper.showWarning('Warning!', { container });
       expect(container.children).toHaveLength(1);
-      
+
       vi.advanceTimersByTime(3999);
       expect(container.children).toHaveLength(1);
-      
+
       vi.advanceTimersByTime(1);
       vi.advanceTimersByTime(300); // Fade out completion
       expect(container.children).toHaveLength(0);
-      
+
       vi.useRealTimers();
     });
   });
@@ -277,14 +280,14 @@ describe('NotificationHelper', () => {
 
     it('should be auto-removed after 3 seconds', () => {
       vi.useFakeTimers();
-      
+
       NotificationHelper.showSimple('Auto remove', container);
       expect(container.children).toHaveLength(1);
-      
+
       vi.advanceTimersByTime(3000);
       vi.advanceTimersByTime(300); // Fade out completion
       expect(container.children).toHaveLength(0);
-      
+
       vi.useRealTimers();
     });
   });
@@ -292,26 +295,26 @@ describe('NotificationHelper', () => {
   describe('remove', () => {
     it('should remove notification element', () => {
       vi.useFakeTimers();
-      
+
       const notification = NotificationHelper.show('Test', { container, duration: 0 });
       expect(container.children).toHaveLength(1);
 
       NotificationHelper.remove(notification);
-      
+
       // Fade out effect is applied
       expect(notification.style.opacity).toBe('0');
       expect(notification.style.transform).toBe('translateX(100%)');
-      
+
       // Removed after 300ms
       vi.advanceTimersByTime(300);
       expect(container.children).toHaveLength(0);
-      
+
       vi.useRealTimers();
     });
 
     it('should do nothing when parent element does not exist', () => {
       const orphanElement = document.createElement('div');
-      
+
       // Verify that no error is thrown
       expect(() => {
         NotificationHelper.remove(orphanElement);
@@ -379,17 +382,17 @@ describe('NotificationHelper', () => {
 
       // Base class
       expect(styles).toContain('.editor-notification');
-      
+
       // Position classes
       expect(styles).toContain('.editor-notification--top-right');
       expect(styles).toContain('.editor-notification--bottom-center');
-      
+
       // Type classes
       expect(styles).toContain('.editor-notification--success');
       expect(styles).toContain('.editor-notification--error');
       expect(styles).toContain('.editor-notification--warning');
       expect(styles).toContain('.editor-notification--info');
-      
+
       // Animation
       expect(styles).toContain('@keyframes slideIn');
     });

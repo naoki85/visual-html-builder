@@ -35,7 +35,7 @@ describe('StylesHelper', () => {
   describe('getEditorStyles', () => {
     it('should return editor CSS styles', () => {
       const styles = StylesHelper.getEditorStyles();
-      
+
       expect(styles).toContain('.html-gui-editor');
       expect(styles).toContain('display: grid');
       expect(styles).toContain('.editor-sidebar');
@@ -44,7 +44,7 @@ describe('StylesHelper', () => {
 
     it('should include styles using CSS variables', () => {
       const styles = StylesHelper.getEditorStyles();
-      
+
       expect(styles).toContain('var(--editor-border-color, #ddd)');
       expect(styles).toContain('var(--sidebar-bg, #f8f9fa)');
       expect(styles).toContain('var(--text-color, #333)');
@@ -76,9 +76,9 @@ describe('StylesHelper', () => {
 
     it('should make isStylesInjected return true after injection', () => {
       expect(StylesHelper.isStylesInjected()).toBe(false);
-      
+
       StylesHelper.injectEditorStyles();
-      
+
       expect(StylesHelper.isStylesInjected()).toBe(true);
     });
   });
@@ -89,7 +89,7 @@ describe('StylesHelper', () => {
       expect(StylesHelper.isStylesInjected()).toBe(true);
 
       StylesHelper.removeEditorStyles();
-      
+
       expect(StylesHelper.isStylesInjected()).toBe(false);
       expect(document.getElementById(StylesHelper.getStyleId())).toBeNull();
     });
@@ -117,7 +117,7 @@ describe('StylesHelper', () => {
 
       // Default ID (testable though implementation may vary)
       const styleElements = document.head.querySelectorAll('style');
-      const hasCustomStyles = Array.from(styleElements).some(style => 
+      const hasCustomStyles = Array.from(styleElements).some(style =>
         style.textContent?.includes(customCSS)
       );
       expect(hasCustomStyles).toBe(true);
@@ -129,7 +129,7 @@ describe('StylesHelper', () => {
       if (customStyle) {
         customStyle.remove();
       }
-      
+
       // Clean up custom styles with default ID as well
       const styleElements = document.head.querySelectorAll('style');
       styleElements.forEach(style => {

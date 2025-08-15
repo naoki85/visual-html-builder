@@ -104,7 +104,9 @@ describe('UtilityHelpers', () => {
     });
 
     it('should recognize URLs with query parameters and fragments', () => {
-      expect(UtilityHelpers.isValidUrl('https://example.com/path?param=value&other=123#section')).toBe(true);
+      expect(
+        UtilityHelpers.isValidUrl('https://example.com/path?param=value&other=123#section')
+      ).toBe(true);
     });
   });
 });

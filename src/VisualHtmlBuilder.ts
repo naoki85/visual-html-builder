@@ -36,7 +36,11 @@ interface EditorElement {
 class VisualHtmlBuilder {
   public containerId: string;
   public container: HTMLElement;
-  public options: EditorOptions & { theme: string; enabledElements: string[]; initialContent: EditorElement[] };
+  public options: EditorOptions & {
+    theme: string;
+    enabledElements: string[];
+    initialContent: EditorElement[];
+  };
   public elements: EditorElement[];
   public selectedElement: EditorElement | null;
   public draggedElement: number | null;
@@ -44,7 +48,7 @@ class VisualHtmlBuilder {
   public elementCounter: number;
   public previewIframe: HTMLIFrameElement | null;
   public htmlTemplate: HTMLTemplate;
-  
+
   constructor(containerId: string, options: EditorOptions = {}) {
     this.containerId = containerId;
     const container = document.getElementById(containerId);
@@ -57,7 +61,7 @@ class VisualHtmlBuilder {
       theme: 'default',
       enabledElements: ['title', 'text', 'image', 'list'],
       initialContent: [],
-      ...options
+      ...options,
     };
 
     this.elements = [];
@@ -74,12 +78,12 @@ class VisualHtmlBuilder {
   init() {
     // Setup basic structure and styles without rendering element buttons
     this.setupDOM();
-    
+
     // Load initial content if provided
     if (this.options.initialContent.length > 0) {
       this.elements = [...this.options.initialContent];
     }
-    
+
     // Make editor available globally for event handlers
     window.htmlEditor = this;
   }
@@ -127,7 +131,7 @@ class VisualHtmlBuilder {
     // Inject default styles
     StylesHelper.injectEditorStyles();
     DragDropHelper.injectDragDropStyles();
-    
+
     // Make editor available globally for event handlers
     window.htmlEditor = this;
   }
@@ -136,17 +140,21 @@ class VisualHtmlBuilder {
     // Update element buttons based on current enabled elements and registered types
     const elementButtonsContainer = this.container.querySelector('.element-buttons');
     if (elementButtonsContainer) {
-      elementButtonsContainer.innerHTML = this.options.enabledElements.map(type => `
+      elementButtonsContainer.innerHTML = this.options.enabledElements
+        .map(
+          type => `
         <button class="element-button" data-type="${type}">
           <span class="element-icon">${this.elementTypes[type]?.icon || '?'}</span>
           <span class="element-name">${this.elementTypes[type]?.name || type}</span>
         </button>
-      `).join('');
+      `
+        )
+        .join('');
     }
 
     // Re-attach event listeners for new buttons
     this.attachEventListeners();
-    
+
     // Update preview if there are elements
     if (this.elements.length > 0) {
       this.updatePreview();
@@ -156,7 +164,7 @@ class VisualHtmlBuilder {
   attachEventListeners() {
     // Element buttons
     this.container.querySelectorAll('.element-button').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', e => {
         const target = e.currentTarget as HTMLElement;
         if (!target) return;
 
@@ -169,7 +177,7 @@ class VisualHtmlBuilder {
 
     // Tab switching
     this.container.querySelectorAll('.tab-button').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', e => {
         const target = e.currentTarget as HTMLElement;
         if (!target) return;
 
@@ -185,7 +193,6 @@ class VisualHtmlBuilder {
       this.copyHTML();
     });
 
-
     // Note: Preview area interactions are now handled by iframe event listeners
   }
 
@@ -195,9 +202,9 @@ class VisualHtmlBuilder {
     }
 
     const element = {
-      id: Date.now() + (++this.elementCounter),
+      id: Date.now() + ++this.elementCounter,
       type: type,
-      props: { ...this.elementTypes[type].defaultProps }
+      props: { ...this.elementTypes[type].defaultProps },
     };
 
     this.elements.push(element);
@@ -208,12 +215,12 @@ class VisualHtmlBuilder {
   selectElement(elementId: number) {
     this.selectedElement = this.elements.find(el => el.id === elementId) || null;
     this.updatePropertiesPanel();
-    
+
     // Update visual selection
     this.container.querySelectorAll('.preview-element').forEach(el => {
       el.classList.remove('selected');
     });
-    
+
     const selectedEl = this.container.querySelector(`[data-element-id="${elementId}"]`);
     if (selectedEl) {
       selectedEl.classList.add('selected');
@@ -225,7 +232,6 @@ class VisualHtmlBuilder {
     this.updateHTMLOutput();
   }
 
-
   updateIframePreview() {
     const previewArea = this.container.querySelector('.preview-area');
     if (!previewArea) return;
@@ -234,46 +240,52 @@ class VisualHtmlBuilder {
     if (!this.previewIframe) {
       // Add iframe-mode class for CSS styling
       previewArea.classList.add('iframe-mode');
-      
+
       this.previewIframe = IframePreviewHelper.createIframePreview(
         previewArea as HTMLElement,
         this.options.iframePreviewOptions
       );
 
       // Setup event listeners for iframe
-      IframePreviewHelper.setupIframeEventListeners(this.previewIframe, {
-        onElementClick: (elementId) => {
-          this.selectElement(elementId);
+      IframePreviewHelper.setupIframeEventListeners(
+        this.previewIframe,
+        {
+          onElementClick: elementId => {
+            this.selectElement(elementId);
+          },
+          onElementDragStart: elementId => {
+            this.draggedElement = elementId;
+          },
+          onElementDragEnd: () => {
+            this.draggedElement = null;
+          },
+          onDrop: newOrder => {
+            // Reorder elements array
+            const newElements: EditorElement[] = [];
+            newOrder.forEach(id => {
+              const element = this.elements.find(el => el.id === id);
+              if (element) {
+                newElements.push(element);
+              }
+            });
+            this.elements = newElements;
+            this.updatePreview();
+          },
         },
-        onElementDragStart: (elementId) => {
-          this.draggedElement = elementId;
-        },
-        onElementDragEnd: () => {
-          this.draggedElement = null;
-        },
-        onDrop: (newOrder) => {
-          // Reorder elements array
-          const newElements: EditorElement[] = [];
-          newOrder.forEach(id => {
-            const element = this.elements.find(el => el.id === id);
-            if (element) {
-              newElements.push(element);
-            }
-          });
-          this.elements = newElements;
-          this.updatePreview();
-        }
-      }, this.options.iframePreviewOptions);
+        this.options.iframePreviewOptions
+      );
     }
 
     // Generate HTML content
-    const htmlContent = this.elements.length === 0 
-      ? '<div class="empty-state">Click elements from the sidebar to add them here</div>'
-      : this.elements.map(element => {
-          const elementType = this.elementTypes[element.type];
-          const validation = elementType?.validate(element.props);
-          
-          return `
+    const htmlContent =
+      this.elements.length === 0
+        ? '<div class="empty-state">Click elements from the sidebar to add them here</div>'
+        : this.elements
+            .map(element => {
+              const elementType = this.elementTypes[element.type];
+              const validation = elementType?.validate(element.props);
+
+              return `
             <div class="preview-element ${validation ? 'has-error' : ''}" 
                  data-element-id="${element.id}" 
                  draggable="true">
@@ -287,7 +299,8 @@ class VisualHtmlBuilder {
               </div>
             </div>
           `;
-        }).join('');
+            })
+            .join('');
 
     // Update iframe content
     IframePreviewHelper.updateIframeContent(this.previewIframe, htmlContent);
@@ -303,7 +316,7 @@ class VisualHtmlBuilder {
 
   generateHTML() {
     if (this.elements.length === 0) return '';
-    
+
     return this.elements
       .map(element => this.elementTypes[element.type]?.render(element.props) || '')
       .join('\n');
@@ -311,19 +324,20 @@ class VisualHtmlBuilder {
 
   updatePropertiesPanel() {
     const propertiesContent = this.container.querySelector('.properties-content');
-    
+
     if (!propertiesContent) return;
-    
+
     if (!this.selectedElement) {
-      propertiesContent.innerHTML = '<div class="no-selection">Select an element to edit its properties</div>';
+      propertiesContent.innerHTML =
+        '<div class="no-selection">Select an element to edit its properties</div>';
       return;
     }
 
     const elementType = this.elementTypes[this.selectedElement.type];
     if (!elementType) return;
-    
+
     const validation = elementType.validate(this.selectedElement.props);
-    
+
     propertiesContent.innerHTML = `
       <div class="properties-header">
         <h4>${elementType.name}</h4>
@@ -335,7 +349,7 @@ class VisualHtmlBuilder {
 
   updateProperty(key: string, value: any) {
     if (!this.selectedElement) return;
-    
+
     this.selectedElement.props[key] = value;
     this.updatePreview();
     this.updatePropertiesPanel();
@@ -344,7 +358,7 @@ class VisualHtmlBuilder {
   // List-specific methods
   updateListItem(index: number, value: string) {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-    
+
     this.selectedElement.props.items[index] = value;
     this.updatePreview();
     this.updatePropertiesPanel();
@@ -352,7 +366,7 @@ class VisualHtmlBuilder {
 
   addListItem() {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-    
+
     this.selectedElement.props.items.push('New item');
     this.updatePreview();
     this.updatePropertiesPanel();
@@ -360,7 +374,7 @@ class VisualHtmlBuilder {
 
   removeListItem(index: number) {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-    
+
     this.selectedElement.props.items.splice(index, 1);
     this.updatePreview();
     this.updatePropertiesPanel();
@@ -368,11 +382,11 @@ class VisualHtmlBuilder {
 
   deleteElement(elementId: number) {
     this.elements = this.elements.filter(el => el.id !== elementId);
-    
+
     if (this.selectedElement && this.selectedElement.id === elementId) {
       this.selectedElement = null;
     }
-    
+
     this.updatePreview();
     this.updatePropertiesPanel();
   }
@@ -395,10 +409,9 @@ class VisualHtmlBuilder {
     }
   }
 
-
   async copyHTML() {
     const html = this.generateFullHTML();
-    
+
     try {
       await navigator.clipboard.writeText(html);
       NotificationHelper.showSuccess('Full HTML copied to clipboard!');
@@ -413,7 +426,6 @@ class VisualHtmlBuilder {
       NotificationHelper.showSuccess('Full HTML copied to clipboard!');
     }
   }
-
 
   // Notifications are now managed by NotificationHelper
 
@@ -468,7 +480,6 @@ class VisualHtmlBuilder {
     this.container.innerHTML = '';
   }
 }
-
 
 // Export as ES module (modern standard)
 export default VisualHtmlBuilder;

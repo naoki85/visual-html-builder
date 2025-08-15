@@ -179,7 +179,7 @@ describe('ElementTypesHelper', () => {
       expect(listElement.icon).toBe('•');
       expect(listElement.defaultProps).toEqual({
         items: ['Item 1', 'Item 2', 'Item 3'],
-        ordered: false
+        ordered: false,
       });
     });
 
@@ -268,13 +268,13 @@ describe('ElementTypesHelper', () => {
         name: 'Custom',
         icon: 'C',
         defaultProps: { value: 'test' },
-        render: (props) => `<div>${props.value}</div>`,
+        render: props => `<div>${props.value}</div>`,
         renderEditor: () => '<input>',
-        validate: () => null
+        validate: () => null,
       };
 
       const result = ElementTypesHelper.registerElementType(existingTypes, 'custom', newType);
-      
+
       expect(result).toHaveProperty('title');
       expect(result).toHaveProperty('custom');
       expect(result.custom).toBe(newType);
@@ -289,11 +289,11 @@ describe('ElementTypesHelper', () => {
         defaultProps: {},
         render: () => '',
         renderEditor: () => '',
-        validate: () => null
+        validate: () => null,
       };
 
       const result = ElementTypesHelper.registerElementType(existingTypes, 'custom', newType);
-      
+
       expect(result).not.toBe(existingTypes);
       expect(existingTypes).not.toHaveProperty('custom');
     });
@@ -307,11 +307,11 @@ describe('ElementTypesHelper', () => {
         defaultProps: {},
         render: () => '',
         renderEditor: () => '',
-        validate: () => null
+        validate: () => null,
       };
 
       const result = ElementTypesHelper.registerElementType(existingTypes, 'title', newType);
-      
+
       expect(result.title).toBe(newType);
       expect(result.title).not.toBe(originalTitle);
     });
