@@ -48,7 +48,7 @@ import VisualHtmlBuilder from '@naoki85/visual-html-builder';
 // Basic initialization
 const editor = new VisualHtmlBuilder('editor-container', {
   theme: 'default',
-  enabledElements: ['title', 'text', 'image', 'list']
+  enabledElements: ['title', 'text', 'image', 'list'] // Default element types
 });
 editor.render();
 ```
@@ -231,7 +231,7 @@ src/helpers/
 - **c8**: Coverage report generation
 
 ### Runtime Environment
-- **Node.js**: >=18.0.0
+- **Node.js**: >=20.0.0
 - **npm**: >=8.0.0
 
 ## 📋 Use Cases
@@ -249,8 +249,11 @@ src/helpers/
 - **Modular Design**: Select and use only the features you need
 - **Type Safety**: Complete type support with TypeScript
 - **Lightweight**: Minimal dependencies with 44kB lightweight implementation
+- **Default Element Types**: Includes 4 built-in element types: `title`, `text`, `image`, `list`
 
 ## 🧩 Custom Element Development
+
+
 
 ### ElementType Interface
 
@@ -303,74 +306,58 @@ editor.registerElementType('custom-button', {
 });
 ```
 
-### Complex Custom Element Example
+### Overriding Default Element Types
+
+The built-in element types (`title`, `text`, `image`, `list`) can be completely overridden by registering custom elements with the same names. This allows you to customize the behavior and appearance of default elements while maintaining the same API.
 
 ```typescript
-// Video player element
-editor.registerElementType('video-player', {
-  name: 'Video Player',
-  icon: '📹',
-  defaultProps: {
-    src: '',
-    poster: '',
-    controls: true,
-    autoplay: false,
-    width: 640,
-    height: 360
+// Override the default 'title' element
+editor.registerElementType('title', {
+  name: 'Custom Title',
+  icon: '📝',
+  defaultProps: { 
+    text: 'Custom Title', 
+    level: 1,
+    color: '#007bff',
+    alignment: 'left'
   },
-  render: (props) => {
-    const attributes = [
-      `src="${UtilityHelpers.escapeHtml(props.src)}"`,
-      `width="${props.width}"`,
-      `height="${props.height}"`,
-      props.poster ? `poster="${UtilityHelpers.escapeHtml(props.poster)}"` : '',
-      props.controls ? 'controls' : '',
-      props.autoplay ? 'autoplay' : ''
-    ].filter(Boolean).join(' ');
-    
-    return `<video ${attributes}>Your browser does not support the video tag.</video>`;
-  },
+  render: (props) => `
+    <h${props.level} style="color: ${props.color}; text-align: ${props.alignment};">
+      ${props.text}
+    </h${props.level}>
+  `,
   renderEditor: (props) => `
     <div class="property-group">
-      <label>Video URL:</label>
-      <input type="url" value="${props.src}" 
-             onchange="window.htmlEditor.updateProperty('src', this.value)">
+      <label>Title Text:</label>
+      <input type="text" value="${props.text}" 
+             onchange="window.htmlEditor.updateProperty('text', this.value)">
     </div>
     <div class="property-group">
-      <label>Poster Image:</label>
-      <input type="url" value="${props.poster}" 
-             onchange="window.htmlEditor.updateProperty('poster', this.value)">
+      <label>Heading Level:</label>
+      <select onchange="window.htmlEditor.updateProperty('level', parseInt(this.value))">
+        <option value="1" ${props.level === 1 ? 'selected' : ''}>H1</option>
+        <option value="2" ${props.level === 2 ? 'selected' : ''}>H2</option>
+        <option value="3" ${props.level === 3 ? 'selected' : ''}>H3</option>
+        <option value="4" ${props.level === 4 ? 'selected' : ''}>H4</option>
+        <option value="5" ${props.level === 5 ? 'selected' : ''}>H5</option>
+        <option value="6" ${props.level === 6 ? 'selected' : ''}>H6</option>
+      </select>
     </div>
     <div class="property-group">
-      <label>
-        <input type="checkbox" ${props.controls ? 'checked' : ''} 
-               onchange="window.htmlEditor.updateProperty('controls', this.checked)">
-        Show Controls
-      </label>
+      <label>Text Color:</label>
+      <input type="color" value="${props.color}" 
+             onchange="window.htmlEditor.updateProperty('color', this.value)">
     </div>
     <div class="property-group">
-      <label>
-        <input type="checkbox" ${props.autoplay ? 'checked' : ''} 
-               onchange="window.htmlEditor.updateProperty('autoplay', this.checked)">
-        Autoplay
-      </label>
-    </div>
-    <div class="property-group">
-      <label>Width:</label>
-      <input type="number" value="${props.width}" min="1" 
-             onchange="window.htmlEditor.updateProperty('width', parseInt(this.value))">
-    </div>
-    <div class="property-group">
-      <label>Height:</label>
-      <input type="number" value="${props.height}" min="1" 
-             onchange="window.htmlEditor.updateProperty('height', parseInt(this.value))">
+      <label>Alignment:</label>
+      <select onchange="window.htmlEditor.updateProperty('alignment', this.value)">
+        <option value="left" ${props.alignment === 'left' ? 'selected' : ''}>Left</option>
+        <option value="center" ${props.alignment === 'center' ? 'selected' : ''}>Center</option>
+        <option value="right" ${props.alignment === 'right' ? 'selected' : ''}>Right</option>
+      </select>
     </div>
   `,
-  validate: (props) => {
-    if (!props.src.trim()) return 'Video URL is required';
-    if (!UtilityHelpers.isValidUrl(props.src)) return 'Please enter a valid video URL';
-    return null;
-  }
+  validate: (props) => props.text.trim() ? null : 'Title text is required'
 });
 ```
 
