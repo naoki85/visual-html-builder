@@ -57,11 +57,6 @@ describe('VisualHtmlBuilder', () => {
       }).toThrow('could not find a element: non-existent-container');
     });
 
-    it('should set global window.htmlEditor', () => {
-      const editor = new VisualHtmlBuilder('test-editor-container');
-
-      expect((window as any).htmlEditor).toBe(editor);
-    });
 
   });
 

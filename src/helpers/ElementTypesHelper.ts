@@ -30,11 +30,11 @@ export const ElementTypesHelper = {
         <div class="property-group">
           <label>Text:</label>
           <input type="text" value="${UtilityHelpers.escapeHtml(props.text)}" 
-                 onchange="window.htmlEditor.updateProperty('text', this.value)">
+                 class="property-input" data-property="text">
         </div>
         <div class="property-group">
           <label>Level:</label>
-          <select onchange="window.htmlEditor.updateProperty('level', parseInt(this.value))">
+          <select class="property-input" data-property="level" data-value-type="int">
             ${[1, 2, 3, 4, 5, 6].map(i => `<option value="${i}" ${props.level === i ? 'selected' : ''}>H${i}</option>`).join('')}
           </select>
         </div>
@@ -56,7 +56,7 @@ export const ElementTypesHelper = {
       renderEditor: (props: any) => `
         <div class="property-group">
           <label>Content:</label>
-          <textarea rows="4" onchange="window.htmlEditor.updateProperty('content', this.value)">${UtilityHelpers.escapeHtml(props.content)}</textarea>
+          <textarea rows="4" class="property-input" data-property="content">${UtilityHelpers.escapeHtml(props.content)}</textarea>
         </div>
       `,
       validate: (props: any) =>
@@ -87,24 +87,24 @@ export const ElementTypesHelper = {
         <div class="property-group">
           <label>Image URL:</label>
           <input type="url" value="${UtilityHelpers.escapeHtml(props.src)}" 
-                 onchange="window.htmlEditor.updateProperty('src', this.value)"
+                 class="property-input" data-property="src"
                  placeholder="https://example.com/image.jpg">
         </div>
         <div class="property-group">
           <label>Alt Text:</label>
           <input type="text" value="${UtilityHelpers.escapeHtml(props.alt)}" 
-                 onchange="window.htmlEditor.updateProperty('alt', this.value)">
+                 class="property-input" data-property="alt">
         </div>
         <div class="property-group">
           <label>Width (px):</label>
           <input type="number" value="${props.width}" 
-                 onchange="window.htmlEditor.updateProperty('width', this.value)"
+                 class="property-input" data-property="width"
                  min="1" placeholder="Auto">
         </div>
         <div class="property-group">
           <label>Height (px):</label>
           <input type="number" value="${props.height}" 
-                 onchange="window.htmlEditor.updateProperty('height', this.value)"
+                 class="property-input" data-property="height"
                  min="1" placeholder="Auto">
         </div>
       `,
@@ -135,7 +135,7 @@ export const ElementTypesHelper = {
         <div class="property-group">
           <label>
             <input type="checkbox" ${props.ordered ? 'checked' : ''} 
-                   onchange="window.htmlEditor.updateProperty('ordered', this.checked)">
+                   class="property-input" data-property="ordered" data-value-type="boolean">
             Ordered List
           </label>
         </div>
@@ -147,13 +147,13 @@ export const ElementTypesHelper = {
                 (item: any, index: any) => `
               <div class="list-item-editor">
                 <input type="text" value="${UtilityHelpers.escapeHtml(item)}" 
-                       onchange="window.htmlEditor.updateListItem(${index}, this.value)">
-                <button type="button" onclick="window.htmlEditor.removeListItem(${index})">×</button>
+                       class="list-item-input" data-index="${index}">
+                <button type="button" class="remove-list-item" data-index="${index}">×</button>
               </div>
             `
               )
               .join('')}
-            <button type="button" onclick="window.htmlEditor.addListItem()">+ Add Item</button>
+            <button type="button" class="add-list-item">+ Add Item</button>
           </div>
         </div>
       `,

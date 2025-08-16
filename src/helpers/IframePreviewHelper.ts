@@ -266,7 +266,23 @@ export const IframePreviewHelper = {
     // Element click event
     if (finalOptions.enableElementSelection && callbacks.onElementClick) {
       iframeDoc.addEventListener('click', e => {
-        const elementDiv = (e.target as HTMLElement).closest('.preview-element');
+        const target = e.target as HTMLElement;
+        
+        // Handle delete button click
+        if (target.classList.contains('delete-element')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const elementId = parseInt(target.getAttribute('data-element-id') || '0');
+          // Send message to parent window
+          window.parent.postMessage({
+            type: 'deleteElement',
+            elementId: elementId
+          }, '*');
+          return;
+        }
+
+        // Handle element selection
+        const elementDiv = target.closest('.preview-element');
         if (elementDiv) {
           e.preventDefault();
           e.stopPropagation();

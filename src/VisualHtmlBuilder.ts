@@ -5,12 +5,6 @@ import { DragDropHelper } from './helpers/DragDropHelper';
 import { IframePreviewHelper } from './helpers/IframePreviewHelper';
 import { HTMLTemplateHelper, type HTMLTemplate } from './helpers/HTMLTemplateHelper';
 
-// Window extension for htmlEditor
-declare global {
-  interface Window {
-    htmlEditor?: VisualHtmlBuilder;
-  }
-}
 
 interface EditorOptions {
   theme?: string;
@@ -83,8 +77,9 @@ class VisualHtmlBuilder {
       this.elements = [...this.options.initialContent];
     }
 
-    // Make editor available globally for event handlers
-    window.htmlEditor = this;
+
+    // Set up postMessage listener for iframe communication
+    this.setupPostMessageListener();
   }
 
   // Element types are now managed by ElementTypesHelper
@@ -131,8 +126,6 @@ class VisualHtmlBuilder {
     StylesHelper.injectEditorStyles();
     DragDropHelper.injectDragDropStyles();
 
-    // Make editor available globally for event handlers
-    window.htmlEditor = this;
   }
 
   render() {
@@ -291,7 +284,7 @@ class VisualHtmlBuilder {
               <div class="element-controls">
                 <span class="element-type">${elementType?.name}</span>
                 ${validation ? `<span class="validation-error">${validation}</span>` : ''}
-                <button class="delete-element" onclick="parent.window.htmlEditor.deleteElement(${element.id})">×</button>
+                <button class="delete-element" data-element-id="${element.id}">×</button>
               </div>
               <div class="element-content">
                 ${elementType?.render(element.props) || ''}
@@ -344,6 +337,9 @@ class VisualHtmlBuilder {
       </div>
       ${elementType.renderEditor(this.selectedElement.props)}
     `;
+
+    // Set up event listeners for property inputs
+    this.setupPropertyEventListeners(propertiesContent);
   }
 
   updateProperty(key: string, value: any) {
@@ -352,6 +348,73 @@ class VisualHtmlBuilder {
     this.selectedElement.props[key] = value;
     this.updatePreview();
     this.updatePropertiesPanel();
+  }
+
+  setupPropertyEventListeners(container: Element) {
+    // Handle property inputs
+    const propertyInputs = container.querySelectorAll('.property-input');
+    propertyInputs.forEach(input => {
+      const element = input as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+      const property = element.dataset.property;
+      const valueType = element.dataset.valueType;
+
+      if (!property) return;
+
+      const eventType = element.type === 'checkbox' ? 'change' : 'input';
+      element.addEventListener(eventType, () => {
+        let value: any = element.value;
+
+        // Type conversion based on data-value-type
+        if (valueType === 'int') {
+          value = parseInt(value, 10);
+        } else if (valueType === 'boolean') {
+          value = (element as HTMLInputElement).checked;
+        }
+
+        this.updateProperty(property, value);
+      });
+    });
+
+    // Handle list item inputs
+    const listItemInputs = container.querySelectorAll('.list-item-input');
+    listItemInputs.forEach(input => {
+      const element = input as HTMLInputElement;
+      const index = parseInt(element.dataset.index || '0', 10);
+
+      element.addEventListener('input', () => {
+        this.updateListItem(index, element.value);
+      });
+    });
+
+    // Handle list item removal buttons
+    const removeButtons = container.querySelectorAll('.remove-list-item');
+    removeButtons.forEach(button => {
+      const element = button as HTMLButtonElement;
+      const index = parseInt(element.dataset.index || '0', 10);
+
+      element.addEventListener('click', () => {
+        this.removeListItem(index);
+      });
+    });
+
+    // Handle add list item button
+    const addButton = container.querySelector('.add-list-item');
+    if (addButton) {
+      addButton.addEventListener('click', () => {
+        this.addListItem();
+      });
+    }
+  }
+
+  setupPostMessageListener() {
+    window.addEventListener('message', (event) => {
+      // For security, check origin if needed
+      // if (event.origin !== expectedOrigin) return;
+
+      if (event.data && event.data.type === 'deleteElement') {
+        this.deleteElement(event.data.elementId);
+      }
+    });
   }
 
   // List-specific methods
@@ -473,9 +536,6 @@ class VisualHtmlBuilder {
   }
 
   destroy() {
-    if (window.htmlEditor === this) {
-      delete window.htmlEditor;
-    }
     this.container.innerHTML = '';
   }
 }

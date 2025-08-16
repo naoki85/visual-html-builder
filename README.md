@@ -139,12 +139,12 @@ editor.registerElementType('custom-button', {
     <div class="property-group">
       <label>Button Text:</label>
       <input type="text" value="${props.text}" 
-             onchange="window.htmlEditor.updateProperty('text', this.value)">
+             class="property-input" data-property="text">
     </div>
     <div class="property-group">
       <label>Color:</label>
       <input type="color" value="${props.color}" 
-             onchange="window.htmlEditor.updateProperty('color', this.value)">
+             class="property-input" data-property="color">
     </div>
   `,
   validate: (props) => props.text.trim() ? null : 'Button text is required'
@@ -254,8 +254,6 @@ src/helpers/
 
 ## 🧩 Custom Element Development
 
-
-
 ### ElementType Interface
 
 ```typescript
@@ -287,16 +285,16 @@ editor.registerElementType('custom-button', {
     <div class="property-group">
       <label>Button Text:</label>
       <input type="text" value="${props.text}" 
-             onchange="window.htmlEditor.updateProperty('text', this.value)">
+             class="property-input" data-property="text">
     </div>
     <div class="property-group">
       <label>Color:</label>
       <input type="color" value="${props.color}" 
-             onchange="window.htmlEditor.updateProperty('color', this.value)">
+             class="property-input" data-property="color">
     </div>
     <div class="property-group">
       <label>Size:</label>
-      <select onchange="window.htmlEditor.updateProperty('size', this.value)">
+      <select class="property-input" data-property="size">
         <option value="small" ${props.size === 'small' ? 'selected' : ''}>Small</option>
         <option value="medium" ${props.size === 'medium' ? 'selected' : ''}>Medium</option>
         <option value="large" ${props.size === 'large' ? 'selected' : ''}>Large</option>
@@ -331,11 +329,11 @@ editor.registerElementType('title', {
     <div class="property-group">
       <label>Title Text:</label>
       <input type="text" value="${props.text}" 
-             onchange="window.htmlEditor.updateProperty('text', this.value)">
+             class="property-input" data-property="text">
     </div>
     <div class="property-group">
       <label>Heading Level:</label>
-      <select onchange="window.htmlEditor.updateProperty('level', parseInt(this.value))">
+      <select class="property-input" data-property="level" data-value-type="int">
         <option value="1" ${props.level === 1 ? 'selected' : ''}>H1</option>
         <option value="2" ${props.level === 2 ? 'selected' : ''}>H2</option>
         <option value="3" ${props.level === 3 ? 'selected' : ''}>H3</option>
@@ -347,11 +345,11 @@ editor.registerElementType('title', {
     <div class="property-group">
       <label>Text Color:</label>
       <input type="color" value="${props.color}" 
-             onchange="window.htmlEditor.updateProperty('color', this.value)">
+             class="property-input" data-property="color">
     </div>
     <div class="property-group">
       <label>Alignment:</label>
-      <select onchange="window.htmlEditor.updateProperty('alignment', this.value)">
+      <select class="property-input" data-property="alignment">
         <option value="left" ${props.alignment === 'left' ? 'selected' : ''}>Left</option>
         <option value="center" ${props.alignment === 'center' ? 'selected' : ''}>Center</option>
         <option value="right" ${props.alignment === 'right' ? 'selected' : ''}>Right</option>
@@ -366,9 +364,10 @@ editor.registerElementType('title', {
 
 1. **Security**: Prevent XSS with `UtilityHelpers.escapeHtml()`
 2. **Element Activation**: Need to add custom element name to `enabledElements` array
-3. **Property Updates**: Use `window.htmlEditor.updateProperty()`
-4. **Validation**: Input validation with appropriate error messages
-5. **Accessibility**: Consider HTML structure and aria attributes
+3. **Property Updates**: Use `class="property-input"` and `data-property` attributes for automatic event handling
+4. **Data Types**: Use `data-value-type="int"` or `data-value-type="boolean"` for type conversion
+5. **Validation**: Input validation with appropriate error messages
+6. **Accessibility**: Consider HTML structure and aria attributes
 
 ---
 

@@ -56,16 +56,16 @@
                     <div class="property-group">
                         <label>Button Text:</label>
                         <input type="text" value="${props.text}" 
-                               onchange="window.htmlEditor.updateProperty('text', this.value)">
+                               class="property-input" data-property="text">
                     </div>
                     <div class="property-group">
                         <label>Color:</label>
                         <input type="color" value="${props.color}" 
-                               onchange="window.htmlEditor.updateProperty('color', this.value)">
+                               class="property-input" data-property="color">
                     </div>
                     <div class="property-group">
                         <label>Size:</label>
-                        <select onchange="window.htmlEditor.updateProperty('size', this.value)">
+                        <select class="property-input" data-property="size">
                             <option value="small" ${props.size === 'small' ? 'selected' : ''}>Small</option>
                             <option value="medium" ${props.size === 'medium' ? 'selected' : ''}>Medium</option>
                             <option value="large" ${props.size === 'large' ? 'selected' : ''}>Large</option>
@@ -73,7 +73,7 @@
                     </div>
                     <div class="property-group">
                         <label>Style:</label>
-                        <select onchange="window.htmlEditor.updateProperty('style', this.value)">
+                        <select class="property-input" data-property="style">
                             <option value="solid" ${props.style === 'solid' ? 'selected' : ''}>Solid</option>
                             <option value="outline" ${props.style === 'outline' ? 'selected' : ''}>Outline</option>
                         </select>
@@ -109,26 +109,26 @@
                     <div class="property-group">
                         <label>Title:</label>
                         <input type="text" value="${props.title}" 
-                               onchange="window.htmlEditor.updateProperty('title', this.value)">
+                               class="property-input" data-property="title">
                     </div>
                     <div class="property-group">
                         <label>Content:</label>
-                        <textarea rows="3" onchange="window.htmlEditor.updateProperty('content', this.value)">${props.content}</textarea>
+                        <textarea rows="3" class="property-input" data-property="content">${props.content}</textarea>
                     </div>
                     <div class="property-group">
                         <label>Image URL (optional):</label>
                         <input type="url" value="${props.imageUrl}" 
-                               onchange="window.htmlEditor.updateProperty('imageUrl', this.value)">
+                               class="property-input" data-property="imageUrl">
                     </div>
                     <div class="property-group">
                         <label>Background Color:</label>
                         <input type="color" value="${props.backgroundColor}" 
-                               onchange="window.htmlEditor.updateProperty('backgroundColor', this.value)">
+                               class="property-input" data-property="backgroundColor">
                     </div>
                     <div class="property-group">
                         <label>Border Color:</label>
                         <input type="color" value="${props.borderColor}" 
-                               onchange="window.htmlEditor.updateProperty('borderColor', this.value)">
+                               class="property-input" data-property="borderColor">
                     </div>
                 `,
                 validate: (props) => {
@@ -167,11 +167,11 @@
                 renderEditor: (props) => `
                     <div class="property-group">
                         <label>Message:</label>
-                        <textarea rows="2" onchange="window.htmlEditor.updateProperty('message', this.value)">${props.message}</textarea>
+                        <textarea rows="2" class="property-input" data-property="message">${props.message}</textarea>
                     </div>
                     <div class="property-group">
                         <label>Type:</label>
-                        <select onchange="window.htmlEditor.updateProperty('type', this.value)">
+                        <select class="property-input" data-property="type">
                             <option value="info" ${props.type === 'info' ? 'selected' : ''}>Info</option>
                             <option value="success" ${props.type === 'success' ? 'selected' : ''}>Success</option>
                             <option value="warning" ${props.type === 'warning' ? 'selected' : ''}>Warning</option>
@@ -181,7 +181,7 @@
                     <div class="property-group">
                         <label>
                             <input type="checkbox" ${props.dismissible ? 'checked' : ''} 
-                                   onchange="window.htmlEditor.updateProperty('dismissible', this.checked)">
+                                   class="property-input" data-property="dismissible" data-value-type="boolean">
                             Dismissible
                         </label>
                     </div>
