@@ -1,8 +1,13 @@
 # Visual HTML Builder
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-blue?logo=github&logoColor=white)](https://naoki85.github.io/visual-html-builder/)
 
 A modern visual HTML builder for browsers. A lightweight TypeScript library that provides intuitive drag-and-drop HTML editing, complete style isolation, and real-time preview functionality.
+
+## 🌐 Demo
+
+**[Live Demo](https://naoki85.github.io/visual-html-builder/)** - Try the Visual HTML Builder in action
 
 ## 🚀 Quick Start
 
