@@ -38,6 +38,20 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      - name: Prepare root index page from demo
+        run: |
+          echo "Creating root index.html from demo page..."
+          cp demo/index.html ./index.html
+          
+          echo "Fixing import paths..."
+          sed -i 's|../src/|./src/|g' index.html
+          
+          echo "Updating page metadata..."
+          sed -i 's|Visual HTML Builder - Demo|Visual HTML Builder|g' index.html
+          
+          echo "Root index.html created successfully"
+          head -20 index.html
+
       - name: Build project
         run: npm run build
 

@@ -18,10 +18,7 @@ export default defineConfig(() => {
       // Static site build for GitHub Pages
       outDir: 'dist',
       rollupOptions: {
-        input: {
-          main: resolve(__dirname, 'index.html'),
-          demo: resolve(__dirname, 'demo/index.html')
-        }
+        input: resolve(__dirname, 'index.html')
       },
       sourcemap: true,
       minify: 'terser',
