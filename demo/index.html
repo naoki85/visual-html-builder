@@ -13,7 +13,9 @@
     </div>
 
     <script type="module" src="../src/VisualHtmlBuilder.ts"></script>
-    <script>
+    <script type="module">
+        import VisualHtmlBuilder from '../src/VisualHtmlBuilder.ts';
+        
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize the HTML GUI Editor
             const editor = new VisualHtmlBuilder('demo-editor', {

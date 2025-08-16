@@ -46,7 +46,7 @@
   "homepage": "https://github.com/naoki85/visual-html-builder#readme",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc --project tsconfig.build.json && vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
