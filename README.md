@@ -20,8 +20,8 @@ npm install @naoki85/visual-html-builder
 # Or via yarn
 yarn add @naoki85/visual-html-builder
 
-# Via CDN
-<script type='module'>
+# Via CDN (ESM)
+<script type="module">
   import VisualHtmlBuilder from "https://unpkg.com/@naoki85/visual-html-builder@latest/dist/index.js";
 </script>
 ```
@@ -53,15 +53,16 @@ const editor = new VisualHtmlBuilder('editor-container', {
 editor.render();
 ```
 
-### CDN Usage
+### CDN Usage (ESM)
 
 ```html
 <body>
   <div id="editor-container"></div>
 
-  <script type='module'>
+  <script type="module">
     import VisualHtmlBuilder from "https://unpkg.com/@naoki85/visual-html-builder@latest/dist/index.js";
-    const editor = new window.VisualHtmlBuilder('editor-container', {
+    
+    const editor = new VisualHtmlBuilder('editor-container', {
       enabledElements: ['title', 'text', 'image', 'list']
     });
     editor.render();
@@ -222,7 +223,7 @@ src/helpers/
 
 ### Development & Build
 - **TypeScript 5.8.3**: Strict type checking, ES2020 target
-- **Vite 7.0.4**: Fast build tool, ES Modules + UMD + IIFE output
+- **Vite 7.0.4**: Fast build tool, ES Modules output
 - **ESLint + Prettier**: Code quality management, unified formatting
 
 ### Testing

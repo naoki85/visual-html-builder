@@ -9,7 +9,6 @@ import { HTMLTemplateHelper, type HTMLTemplate } from './helpers/HTMLTemplateHel
 declare global {
   interface Window {
     htmlEditor?: VisualHtmlBuilder;
-    VisualHtmlBuilder: typeof VisualHtmlBuilder;
   }
 }
 
@@ -484,7 +483,3 @@ class VisualHtmlBuilder {
 // Export as ES module (modern standard)
 export default VisualHtmlBuilder;
 
-// Global browser support for direct script tag usage
-if (typeof window !== 'undefined') {
-  window.VisualHtmlBuilder = VisualHtmlBuilder;
-}

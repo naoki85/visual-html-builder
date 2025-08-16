@@ -24,19 +24,12 @@ export default defineConfig(() => {
       minify: 'terser',
       target: 'es2020',
     } : {
-      // Library build configuration (standard)
+      // Library build configuration (ESM only)
       lib: {
         entry: resolve(__dirname, 'src/VisualHtmlBuilder.ts'),
         name: 'VisualHtmlBuilder',
-        fileName: (format) => {
-          const formatMap: Record<string, string> = {
-            'es': 'index.js',
-            'umd': 'index.umd.js',
-            'iife': 'index.iife.js'
-          };
-          return formatMap[format] || `index.${format}.js`;
-        },
-        formats: ['es', 'umd', 'iife']
+        fileName: 'index',
+        formats: ['es']
       },
       outDir: 'dist',
       sourcemap: true,
@@ -44,14 +37,12 @@ export default defineConfig(() => {
       rollupOptions: {
         external: [],
         output: {
-          globals: {},
           assetFileNames: (assetInfo) => {
             if (assetInfo.name === 'style.css') {
               return 'index.css';
             }
             return assetInfo.name || 'asset';
-          },
-          inlineDynamicImports: true
+          }
         }
       },
       target: 'es2020',

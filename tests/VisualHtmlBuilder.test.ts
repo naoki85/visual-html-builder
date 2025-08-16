@@ -63,11 +63,6 @@ describe('VisualHtmlBuilder', () => {
       expect((window as any).htmlEditor).toBe(editor);
     });
 
-    it('should set VisualHtmlBuilder class on window', () => {
-      new VisualHtmlBuilder('test-editor-container');
-
-      expect((window as any).VisualHtmlBuilder).toBe(VisualHtmlBuilder);
-    });
   });
 
   describe('setupUI', () => {

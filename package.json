@@ -8,22 +8,17 @@
     "README.md",
     "LICENSE"
   ],
-  "main": "dist/index.umd.js",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "types": "dist/VisualHtmlBuilder.d.ts",
   "exports": {
     ".": {
       "types": "./dist/VisualHtmlBuilder.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.umd.js"
+      "import": "./dist/index.js"
     },
     "./dist/index.css": {
-      "import": "./dist/index.css",
-      "require": "./dist/index.css"
+      "import": "./dist/index.css"
     }
   },
-  "unpkg": "dist/index.iife.js",
-  "jsdelivr": "dist/index.iife.js",
   "keywords": [
     "html",
     "builder",
