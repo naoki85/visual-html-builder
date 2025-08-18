@@ -23,7 +23,7 @@ interface EditorOptions {
 interface EditorElement {
   id: number;
   type: string;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
 }
 
 class VisualHtmlBuilder {
@@ -342,7 +342,7 @@ class VisualHtmlBuilder {
     this.setupPropertyEventListeners(propertiesContent);
   }
 
-  updateValidationDisplay(previousProps: Record<string, any>) {
+  updateValidationDisplay(previousProps: Record<string, unknown>) {
     if (!this.selectedElement) return;
 
     const propertiesContent = this.container.querySelector('.properties-content');
@@ -378,7 +378,7 @@ class VisualHtmlBuilder {
     }
   }
 
-  updateProperty(key: string, value: any) {
+  updateProperty(key: string, value: unknown) {
     if (!this.selectedElement) return;
 
     const previousProps = { ...this.selectedElement.props };
@@ -401,10 +401,10 @@ class VisualHtmlBuilder {
 
       const eventType = element.type === 'checkbox' ? 'change' : 'input';
       element.addEventListener(eventType, () => {
-        let value: any = element.value;
+        let value: unknown = element.value;
 
         // Type conversion based on data-value-type
-        if (valueType === 'int') {
+        if (valueType === 'int' && typeof value === 'string') {
           value = parseInt(value, 10);
         } else if (valueType === 'boolean') {
           value = (element as HTMLInputElement).checked;
@@ -459,26 +459,35 @@ class VisualHtmlBuilder {
   // List-specific methods
   updateListItem(index: number, value: string) {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-
-    this.selectedElement.props.items[index] = value;
-    this.updatePreview();
-    this.updatePropertiesPanel();
+    
+    const items = this.selectedElement.props.items;
+    if (Array.isArray(items)) {
+      items[index] = value;
+      this.updatePreview();
+      this.updatePropertiesPanel();
+    }
   }
 
   addListItem() {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-
-    this.selectedElement.props.items.push('New item');
-    this.updatePreview();
-    this.updatePropertiesPanel();
+    
+    const items = this.selectedElement.props.items;
+    if (Array.isArray(items)) {
+      items.push('New item');
+      this.updatePreview();
+      this.updatePropertiesPanel();
+    }
   }
 
   removeListItem(index: number) {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-
-    this.selectedElement.props.items.splice(index, 1);
-    this.updatePreview();
-    this.updatePropertiesPanel();
+    
+    const items = this.selectedElement.props.items;
+    if (Array.isArray(items)) {
+      items.splice(index, 1);
+      this.updatePreview();
+      this.updatePropertiesPanel();
+    }
   }
 
   deleteElement(elementId: number) {
