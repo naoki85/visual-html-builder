@@ -93,7 +93,7 @@ export const ElementTypesHelper = {
         width: undefined,
         height: undefined,
       },
-      render: (props: any) => {
+      render: (props: Record<string, unknown>) => {
         const src = typeof props.src === 'string' ? props.src : '';
         const alt = typeof props.alt === 'string' ? props.alt : '';
         const width = typeof props.width === 'number' ? props.width : 
@@ -139,7 +139,7 @@ export const ElementTypesHelper = {
                  min="1" placeholder="Auto">
         </div>`;
       },
-      validate: (props: any) => {
+      validate: (props: Record<string, unknown>) => {
         const src = typeof props.src === 'string' ? props.src : '';
         if (!src.trim()) return 'Image URL is required';
         if (!UtilityHelpers.isValidUrl(src)) return 'Please enter a valid URL';

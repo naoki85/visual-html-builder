@@ -393,7 +393,7 @@ export const IframePreviewHelper = {
     const draggableElements = [...container.querySelectorAll('.preview-element:not(.dragging)')];
 
     return draggableElements.reduce(
-      (closest: any, child) => {
+      (closest: { offset: number; element?: Element }, child) => {
         const box = child.getBoundingClientRect();
         const offset = y - box.top - box.height / 2;
 
@@ -404,7 +404,7 @@ export const IframePreviewHelper = {
         }
       },
       { offset: Number.NEGATIVE_INFINITY }
-    ).element;
+    ).element || null;
   },
 
   /**

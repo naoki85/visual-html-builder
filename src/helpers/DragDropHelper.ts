@@ -50,7 +50,7 @@ export const DragDropHelper = {
     ];
 
     return draggableElements.reduce(
-      (closest: any, child) => {
+      (closest: { offset: number; element?: Element }, child) => {
         const box = child.getBoundingClientRect();
         const offset = y - box.top - box.height / 2;
 
@@ -61,7 +61,7 @@ export const DragDropHelper = {
         }
       },
       { offset: Number.NEGATIVE_INFINITY }
-    ).element;
+    ).element || null;
   },
 
   /**

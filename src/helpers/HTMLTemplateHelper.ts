@@ -198,7 +198,7 @@ export const HTMLTemplateHelper = {
     const validationError = this.validateTemplate(mergedTemplate);
     if (validationError) {
       // Development warning - will be removed in production build
-      if (typeof window !== 'undefined' && (window as any).__DEV__) {
+      if (typeof window !== 'undefined' && (window as unknown as { __DEV__?: boolean }).__DEV__) {
         // eslint-disable-next-line no-console
         console.warn(`HTMLTemplate validation warning: ${validationError}`);
       }
