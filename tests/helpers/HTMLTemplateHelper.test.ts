@@ -238,7 +238,7 @@ describe('HTMLTemplateHelper', () => {
     it('should continue HTML generation even with warnings', () => {
       const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       // Simulate DEV mode
-      (globalThis as any).__DEV__ = true;
+      (globalThis as unknown as { __DEV__?: boolean }).__DEV__ = true;
 
       const template: HTMLTemplate = {
         head: { title: 'a'.repeat(201) }, // Too long title
@@ -250,7 +250,7 @@ describe('HTMLTemplateHelper', () => {
       expect(result).toContain('<div>Test</div>');
 
       // Cleanup
-      delete (globalThis as any).__DEV__;
+      delete (globalThis as unknown as { __DEV__?: boolean }).__DEV__;
       mockConsoleWarn.mockRestore();
     });
   });

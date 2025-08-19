@@ -13,8 +13,10 @@ describe('VisualHtmlBuilder', () => {
 
   afterEach(() => {
     // Clean up editor instance
-    if ((window as any).htmlEditor) {
-      delete (window as any).htmlEditor;
+    // Legacy cleanup - htmlEditor is no longer used in ESM version
+    const windowWithEditor = window as unknown as { htmlEditor?: unknown };
+    if (windowWithEditor.htmlEditor) {
+      delete windowWithEditor.htmlEditor;
     }
     container.remove();
 

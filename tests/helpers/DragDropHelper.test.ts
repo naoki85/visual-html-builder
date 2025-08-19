@@ -86,9 +86,9 @@ describe('DragDropHelper', () => {
       expect(result).toBe(elements[2]);
     });
 
-    it('should return undefined when dropping below last element', () => {
+    it('should return null when dropping below last element', () => {
       const result = DragDropHelper.getDragAfterElement(container, 200);
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
 
     it('should exclude dragging elements', () => {
