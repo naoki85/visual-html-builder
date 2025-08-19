@@ -84,7 +84,9 @@ describe('IframePreviewHelper', () => {
 
       IframePreviewHelper.updateIframeContent(iframe, htmlContent);
 
-      const doc = iframe.contentDocument as any;
+      const doc = iframe.contentDocument as unknown as {
+        querySelector: vi.Mock;
+      };
       expect(doc.querySelector).toHaveBeenCalledWith('.preview-content');
     });
 
@@ -149,7 +151,10 @@ describe('IframePreviewHelper', () => {
 
       IframePreviewHelper.injectIframeStyles(iframe, customStyles);
 
-      const doc = iframe.contentDocument as any;
+      const doc = iframe.contentDocument as unknown as {
+        createElement: vi.Mock;
+        head: { appendChild: vi.Mock };
+      };
       expect(doc.createElement).toHaveBeenCalledWith('style');
       expect(doc.head.appendChild).toHaveBeenCalled();
     });
@@ -167,7 +172,9 @@ describe('IframePreviewHelper', () => {
 
     it('should remove existing styles before adding new ones', () => {
       const existingStyle = { remove: vi.fn() };
-      const doc = iframe.contentDocument as any;
+      const doc = iframe.contentDocument as unknown as {
+        getElementById: vi.Mock;
+      };
       doc.getElementById.mockReturnValue(existingStyle);
 
       IframePreviewHelper.injectIframeStyles(iframe, 'body { color: blue; }', 'test-style');
@@ -221,7 +228,9 @@ describe('IframePreviewHelper', () => {
         querySelector: vi.fn().mockReturnValue(mockElement),
       };
 
-      vi.spyOn(IframePreviewHelper, 'getIframeDocument').mockReturnValue(mockDocument as any);
+      vi.spyOn(IframePreviewHelper, 'getIframeDocument').mockReturnValue(
+        mockDocument as unknown as Document
+      );
 
       IframePreviewHelper.removeElementFromIframe(iframe, 123);
 
@@ -242,7 +251,9 @@ describe('IframePreviewHelper', () => {
         querySelector: vi.fn().mockReturnValue(null),
       };
 
-      vi.spyOn(IframePreviewHelper, 'getIframeDocument').mockReturnValue(mockDocument as any);
+      vi.spyOn(IframePreviewHelper, 'getIframeDocument').mockReturnValue(
+        mockDocument as unknown as Document
+      );
 
       expect(() => {
         IframePreviewHelper.removeElementFromIframe(iframe, 999);
