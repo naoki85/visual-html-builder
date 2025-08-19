@@ -342,12 +342,51 @@ class VisualHtmlBuilder {
     this.setupPropertyEventListeners(propertiesContent);
   }
 
+  updateValidationDisplay(previousProps: Record<string, any>) {
+    if (!this.selectedElement) return;
+
+    const propertiesContent = this.container.querySelector('.properties-content');
+    if (!propertiesContent) return;
+
+    const elementType = this.elementTypes[this.selectedElement.type];
+    if (!elementType) return;
+
+    const currentValidation = elementType.validate(this.selectedElement.props);
+    const previousValidation = elementType.validate(previousProps);
+
+    // Only update validation error display if validation state changed
+    if (currentValidation !== previousValidation) {
+      const validationErrorEl = propertiesContent.querySelector('.validation-error');
+      const propertiesHeader = propertiesContent.querySelector('.properties-header h4');
+      
+      if (currentValidation) {
+        // Add or update validation error
+        if (validationErrorEl) {
+          validationErrorEl.textContent = currentValidation;
+        } else if (propertiesHeader && propertiesHeader.parentNode) {
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'validation-error';
+          errorDiv.textContent = currentValidation;
+          propertiesHeader.parentNode.appendChild(errorDiv);
+        }
+      } else {
+        // Remove validation error
+        if (validationErrorEl) {
+          validationErrorEl.remove();
+        }
+      }
+    }
+  }
+
   updateProperty(key: string, value: any) {
     if (!this.selectedElement) return;
 
+    const previousProps = { ...this.selectedElement.props };
     this.selectedElement.props[key] = value;
     this.updatePreview();
-    this.updatePropertiesPanel();
+    
+    // Only update validation error display instead of full panel re-render
+    this.updateValidationDisplay(previousProps);
   }
 
   setupPropertyEventListeners(container: Element) {
