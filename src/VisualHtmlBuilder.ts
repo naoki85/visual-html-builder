@@ -460,11 +460,12 @@ class VisualHtmlBuilder {
   updateListItem(index: number, value: string) {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
     
+    const previousProps = { ...this.selectedElement.props };
     const items = this.selectedElement.props.items;
     if (Array.isArray(items)) {
       items[index] = value;
       this.updatePreview();
-      this.updatePropertiesPanel();
+      this.updateValidationDisplay(previousProps);
     }
   }
 
@@ -475,7 +476,7 @@ class VisualHtmlBuilder {
     if (Array.isArray(items)) {
       items.push('New item');
       this.updatePreview();
-      this.updatePropertiesPanel();
+      this.updatePropertiesPanel(); // Need full re-render for new DOM elements
     }
   }
 
@@ -486,7 +487,7 @@ class VisualHtmlBuilder {
     if (Array.isArray(items)) {
       items.splice(index, 1);
       this.updatePreview();
-      this.updatePropertiesPanel();
+      this.updatePropertiesPanel(); // Need full re-render for DOM structure change
     }
   }
 
