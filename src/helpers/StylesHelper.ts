@@ -350,6 +350,26 @@ export const StylesHelper = {
         box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
       }
 
+      /* Checkbox labels should be displayed inline */
+      .property-group label:has(input[type="checkbox"]) {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .property-group label input[type="checkbox"] {
+        width: auto;
+        margin-right: 8px;
+        margin-bottom: 0;
+      }
+
+      /* Fallback for browsers that don't support :has() */
+      .property-group label.checkbox-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+
       .list-editor {
         border: 1px solid var(--input-border, #ddd);
         border-radius: 4px;
