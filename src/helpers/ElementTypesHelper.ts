@@ -6,10 +6,7 @@ export interface ElementType {
   icon: string;
   defaultProps: Record<string, unknown>;
   render: (props: Record<string, unknown>) => string;
-  renderEditor: (
-    props: Record<string, unknown>,
-    onChange?: (key: string, value: unknown) => void
-  ) => string;
+  renderEditor: (props: Record<string, unknown>) => string;
   validate: (props: Record<string, unknown>) => string | null;
 }
 
