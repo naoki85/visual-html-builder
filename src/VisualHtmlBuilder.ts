@@ -193,10 +193,27 @@ class VisualHtmlBuilder {
       throw new Error(`Unknown element type: ${type}`);
     }
 
+    // Deep copy defaultProps to avoid reference sharing
+    const defaultProps = this.elementTypes[type].defaultProps;
+    const props: Record<string, unknown> = {};
+    
+    for (const [key, value] of Object.entries(defaultProps)) {
+      if (Array.isArray(value)) {
+        // Deep copy arrays to avoid reference sharing
+        props[key] = [...value];
+      } else if (value !== null && typeof value === 'object') {
+        // Deep copy objects to avoid reference sharing
+        props[key] = { ...value as Record<string, unknown> };
+      } else {
+        // Primitive values are copied by value
+        props[key] = value;
+      }
+    }
+
     const element = {
       id: Date.now() + ++this.elementCounter,
       type: type,
-      props: { ...this.elementTypes[type].defaultProps },
+      props: props,
     };
 
     this.elements.push(element);
@@ -459,7 +476,6 @@ class VisualHtmlBuilder {
   // List-specific methods
   updateListItem(index: number, value: string) {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-    
     const previousProps = { ...this.selectedElement.props };
     const items = this.selectedElement.props.items;
     if (Array.isArray(items)) {
@@ -471,7 +487,7 @@ class VisualHtmlBuilder {
 
   addListItem() {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-    
+
     const items = this.selectedElement.props.items;
     if (Array.isArray(items)) {
       items.push('New item');
@@ -482,7 +498,7 @@ class VisualHtmlBuilder {
 
   removeListItem(index: number) {
     if (!this.selectedElement || this.selectedElement.type !== 'list') return;
-    
+
     const items = this.selectedElement.props.items;
     if (Array.isArray(items)) {
       items.splice(index, 1);
