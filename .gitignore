@@ -145,3 +145,4 @@ html
 .DS_Store
 CLAUDE.md
 .claude/*
+.kiro/*
