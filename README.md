@@ -360,12 +360,98 @@ editor.registerElementType('title', {
 });
 ```
 
+### Required Event Handling Attributes
+
+When creating custom elements with `renderEditor`, you **must** use specific class names and data attributes for proper event handling:
+
+#### 1. Required CSS Class
+- **`class="property-input"`**: Essential for automatic event binding
+- This class is used by the library to detect input elements and attach change event listeners
+
+#### 2. Required Data Attributes
+- **`data-property="propertyName"`**: Specifies which property this input controls
+- The property name must match a key in your element's `defaultProps`
+
+#### 3. Optional Type Conversion Attributes
+- **`data-value-type="int"`**: Converts string values to integers
+- **`data-value-type="boolean"`**: Converts checkbox states to boolean values
+- Without this attribute, values remain as strings
+
+#### 4. List Element Classes(for list-type elements)
+
+- **`list-editor`** - Container for list editing interface
+- **`list-item-editor`** - Wrapper for individual list item editing
+- **`list-item-input`** - Input field for list items (requires `data-index` attribute)
+- **`remove-list-item`** - Button to remove list items (requires `data-index` attribute)
+- **`add-list-item`** - Button to add new list items
+
+#### 5. List Element Data Atributes(for list-type elements)
+
+- **`data-index`** - Required for list item inputs and remove buttons
+
+#### 6. Other prepared CSS Classes
+- **`property-group`** - Recommended wrapper for styling property sections
+
+### Event Handling Examples
+
+```typescript
+// ✅ Correct: All required attributes present
+renderEditor: (props) => `
+  <div class="property-group">
+    <label>Text Input:</label>
+    <input type="text" value="${props.text}" 
+           class="property-input" data-property="text">
+  </div>
+  
+  <div class="property-group">
+    <label>Number Input:</label>
+    <select class="property-input" data-property="level" data-value-type="int">
+      <option value="1">Level 1</option>
+      <option value="2">Level 2</option>
+    </select>
+  </div>
+  
+  <div class="property-group">
+    <label>
+      <input type="checkbox" ${props.enabled ? 'checked' : ''} 
+             class="property-input" data-property="enabled" data-value-type="boolean">
+      Enable Feature
+    </label>
+  </div>
+`
+
+// ✅ Correct: List element with all required classes
+renderEditor: (props) => `
+  <div class="property-group">
+    <label>Items:</label>
+    <div class="list-editor">
+      ${props.items.map((item, index) => `
+        <div class="list-item-editor">
+          <input type="text" value="${item}" 
+                 class="list-item-input" data-index="${index}">
+          <button type="button" class="remove-list-item" data-index="${index}">×</button>
+        </div>
+      `).join('')}
+      <button type="button" class="add-list-item">+ Add Item</button>
+    </div>
+  </div>
+`
+
+// ❌ Incorrect: Missing required attributes
+renderEditor: (props) => `
+  <input type="text" value="${props.text}">  <!-- Missing class and data-property -->
+  <select>  <!-- Missing class and data-property -->
+    <option value="1">Level 1</option>
+  </select>
+`
+```
+
 ### Usage Notes
 
 1. **Security**: Prevent XSS with `UtilityHelpers.escapeHtml()`
 2. **Element Activation**: Need to add custom element name to `enabledElements` array
-3. **Property Updates**: Use `class="property-input"` and `data-property` attributes for automatic event handling
-4. **Data Types**: Use `data-value-type="int"` or `data-value-type="boolean"` for type conversion
+3. **Event Handling**: Always use `class="property-input"` and `data-property` attributes
+4. **Type Safety**: Use `data-value-type` for automatic type conversion
 5. **Validation**: Input validation with appropriate error messages
 6. **Accessibility**: Consider HTML structure and aria attributes
 
