@@ -1,6 +1,6 @@
 {
   "name": "@naoki85/visual-html-builder",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A modern, TypeScript-based visual HTML builder with drag-and-drop functionality",
   "type": "module",
   "files": [
