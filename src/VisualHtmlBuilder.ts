@@ -539,7 +539,7 @@ class VisualHtmlBuilder {
     try {
       await navigator.clipboard.writeText(html);
       NotificationHelper.showSuccess('Full HTML copied to clipboard!');
-    } catch (err) {
+    } catch {
       // Fallback for older browsers
       const textarea = document.createElement('textarea');
       textarea.value = html;
