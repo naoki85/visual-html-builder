@@ -40,14 +40,12 @@ describe('VisualHtmlBuilder', () => {
 
     it('should initialize editor with custom options', () => {
       const options = {
-        theme: 'dark',
         enabledElements: ['title', 'text'],
         initialContent: [{ id: 1, type: 'title', props: { text: 'Test Title', level: 1 } }],
       };
 
       const editor = new VisualHtmlBuilder('test-editor-container', options);
 
-      expect(editor.options.theme).toBe('dark');
       expect(editor.options.enabledElements).toEqual(['title', 'text']);
       expect(editor.elements).toHaveLength(1);
       expect(editor.elements[0].type).toBe('title');

@@ -47,7 +47,6 @@ import VisualHtmlBuilder from '@naoki85/visual-html-builder';
 
 // Basic initialization
 const editor = new VisualHtmlBuilder('editor-container', {
-  theme: 'default',
   enabledElements: ['title', 'text', 'image', 'list'] // Default element types
 });
 editor.render();
@@ -75,7 +74,6 @@ editor.render();
 ```typescript
 // Full customization example
 const editor = new VisualHtmlBuilder('editor-container', {
-  theme: 'default',
   enabledElements: ['title', 'text', 'image', 'list'],
   iframePreviewOptions: {
     enableDragDrop: true,

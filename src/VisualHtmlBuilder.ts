@@ -7,7 +7,6 @@ import { HTMLTemplateHelper, type HTMLTemplate } from './helpers/HTMLTemplateHel
 
 
 interface EditorOptions {
-  theme?: string;
   enabledElements?: string[];
   initialContent?: EditorElement[];
   iframePreviewOptions?: {
@@ -30,7 +29,6 @@ class VisualHtmlBuilder {
   public containerId: string;
   public container: HTMLElement;
   public options: EditorOptions & {
-    theme: string;
     enabledElements: string[];
     initialContent: EditorElement[];
   };
@@ -51,7 +49,6 @@ class VisualHtmlBuilder {
 
     this.container = container;
     this.options = {
-      theme: 'default',
       enabledElements: ['title', 'text', 'image', 'list'],
       initialContent: [],
       ...options,
