@@ -9,6 +9,8 @@ A modern visual HTML builder for browsers. A lightweight TypeScript library that
 
 **[Live Demo](https://naoki85.github.io/visual-html-builder/)** - Try the Visual HTML Builder in action
 
+![Demo](demo/demo.gif)
+
 ## 🚀 Quick Start
 
 ### Installation
